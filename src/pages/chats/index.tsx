@@ -4,7 +4,7 @@ export default function Chats() {
   return (
     <Layout title="Chats" hasTabBar canGoBack>
       <div className="divide-y-[1px] lg:mx-auto lg:w-3/5">
-        {[1, 1, 1, 1, 1, 1].map((_, i) => (
+        {[1, 1, 1, 1, 1].map((_, i) => (
           <div
             key={i}
             className="flex cursor-pointer items-center space-x-3 px-3 py-3"
