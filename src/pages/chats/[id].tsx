@@ -20,10 +20,10 @@ export default function ChatDetail() {
           <div className="relative flex w-full items-center px-2">
             <input
               type="text"
-              className="input w-full rounded-2xl border-gray-300 pr-12 shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-cyan-500"
+              className="input ring-focus w-full rounded-2xl border-gray-300 pr-12 shadow-sm focus:border-cyan-500"
             />
             <div className="absolute inset-y-0 right-2 flex py-1 pr-1">
-              <button className="flex items-center rounded-2xl bg-cyan-500 px-3 text-sm text-white hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
+              <button className="ring-focus-2 flex items-center rounded-2xl bg-cyan-500 px-3 text-sm text-white hover:bg-cyan-600">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="icon"

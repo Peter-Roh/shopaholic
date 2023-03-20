@@ -42,27 +42,27 @@ export default function Login() {
                   placeholder="Email"
                   required
                 />
-              ) : method === LoginMethods.phone ? (
-                <div className="mx-4 flex w-full rounded-md shadow-sm lg:w-3/5">
-                  <span className="flex-x-center select-none rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">
-                    +82
-                  </span>
-                  <input
-                    type="tel"
-                    className="input rounded-md rounded-l-none"
-                    placeholder="Phone number"
-                    required
-                  />
-                </div>
-              ) : null}
+              ) : (
+                method === LoginMethods.phone && (
+                  <div className="mx-4 flex w-full rounded-md shadow-sm lg:w-3/5">
+                    <span className="flex-x-center select-none rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">
+                      +82
+                    </span>
+                    <input
+                      type="tel"
+                      className="input rounded-md rounded-l-none"
+                      placeholder="Phone number"
+                      required
+                    />
+                  </div>
+                )
+              )}
             </div>
             <div className="flex-x-center w-full">
-              <button className="mx-4 mt-8 w-full rounded-md border-transparent bg-cyan-400 px-3 py-2 font-bold text-white shadow-sm hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 lg:w-3/5">
+              <button className="ring-focus-2 mx-4 mt-8 w-full rounded-md border-transparent bg-cyan-400 px-3 py-2 font-bold text-white shadow-sm hover:bg-cyan-500 lg:w-3/5">
                 {method === LoginMethods.email
                   ? "Get login link"
-                  : method === LoginMethods.phone
-                  ? "Get one-time password"
-                  : null}
+                  : method === LoginMethods.phone && "Get one-time password"}
               </button>
             </div>
           </form>
@@ -75,7 +75,7 @@ export default function Login() {
             </div>
           </div>
           <div className="mt-2 grid w-full grid-cols-2 gap-3 px-4 lg:w-3/5">
-            <button className="flex-x-center rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+            <button className="flex-x-center ring-focus rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm hover:bg-gray-300 focus:ring-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24"
@@ -101,7 +101,7 @@ export default function Login() {
                 <path d="M1 1h22v22H1z" fill="none" />
               </svg>
             </button>
-            <button className="flex-x-center rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+            <button className="flex-x-center ring-focus rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm hover:bg-gray-300 focus:ring-1">
               <svg
                 className="h-5 w-5"
                 aria-hidden="true"
