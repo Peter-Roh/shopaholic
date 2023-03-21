@@ -1,9 +1,10 @@
+import type { NextPage } from "next";
 import Link from "next/link";
 
-export default function Item() {
+const Item: NextPage = () => {
   return (
     <Link href="/items/1">
-      <div className="flex cursor-pointer items-center justify-between space-x-4 border-b pb-2">
+      <div className="flex cursor-pointer items-center justify-between space-x-4 pt-2">
         <div className="flex">
           <div className="h-20 w-20 rounded-md bg-gray-400 " />
           <div className="ml-4 flex flex-col items-start justify-start">
@@ -53,4 +54,6 @@ export default function Item() {
       </div>
     </Link>
   );
-}
+};
+
+export default Item;

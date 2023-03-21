@@ -7,17 +7,16 @@ const Home: NextPage = () => {
   return (
     <Layout title="Home" hasTabBar canGoBack>
       <div className="mt-14 flex w-full flex-col justify-start lg:mx-auto lg:w-3/5">
-        <div className="h-56 w-full bg-gray-600" /> {/* TODO: carousel */}
-        <div className="mt-4 space-y-2">
-          <Item></Item>
-          <Item></Item>
-          <Item></Item>
-          <Item></Item>
-          <Item></Item>
+        <div className="aspect-video w-full bg-gray-600" />
+        {/* TODO: carousel */}
+        <div className="mt-4 flex flex-col space-y-2 divide-y">
+          {[1, 1, 1, 1, 1].map((_, i) => (
+            <Item key={i}></Item>
+          ))}
         </div>
       </div>
       <Link href="/items/upload">
-        <button className="fixed bottom-32 right-4 z-10 cursor-pointer rounded-full bg-cyan-400 p-3 text-white shadow-xl transition-colors hover:bg-cyan-500 lg:hidden">
+        <button className="fixed bottom-28 right-6 z-10 cursor-pointer rounded-full border-transparent bg-cyan-400 p-3 text-white shadow-xl transition-colors hover:bg-cyan-500 lg:hidden">
           <svg
             className="icon"
             fill="none"

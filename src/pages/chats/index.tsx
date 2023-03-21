@@ -1,10 +1,11 @@
+import type { NextPage } from "next";
 import Layout from "@/components/layout";
 import Link from "next/link";
 
-export default function Chats() {
+const Chats: NextPage = () => {
   return (
     <Layout title="Chats" hasTabBar canGoBack>
-      <div className="divide-y-[1px] lg:mx-auto lg:w-3/5">
+      <div className="divide-y lg:mx-auto lg:w-3/5">
         {[1, 1, 1, 1, 1].map((_, i) => (
           <div key={i}>
             <Link href="/chats/1" className="h-full w-full">
@@ -21,4 +22,6 @@ export default function Chats() {
       </div>
     </Layout>
   );
-}
+};
+
+export default Chats;

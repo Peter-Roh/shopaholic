@@ -1,6 +1,7 @@
+import type { NextPage } from "next";
 import Layout from "@/components/layout";
 
-export default function ChatDetail() {
+const ChatDetail: NextPage = () => {
   return (
     <Layout title="Chatroom" canGoBack>
       <div className="space-y-4 px-2 pb-16 lg:mx-auto lg:w-3/5">
@@ -47,4 +48,6 @@ export default function ChatDetail() {
       </div>
     </Layout>
   );
-}
+};
+
+export default ChatDetail;

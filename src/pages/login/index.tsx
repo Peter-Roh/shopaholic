@@ -1,8 +1,9 @@
+import type { NextPage } from "next";
 import Layout from "@/components/layout";
 import { type LoginMethod, LoginMethods } from "@/types/Login";
 import { useState } from "react";
 
-export default function Login() {
+const Login: NextPage = () => {
   const [method, setMethod] = useState<LoginMethod>(LoginMethods.email);
 
   return (
@@ -120,4 +121,6 @@ export default function Login() {
       </div>
     </Layout>
   );
-}
+};
+
+export default Login;

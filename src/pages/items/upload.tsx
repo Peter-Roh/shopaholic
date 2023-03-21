@@ -1,11 +1,12 @@
+import type { NextPage } from "next";
 import Layout from "@/components/layout";
 
-function Upload() {
+const Upload: NextPage = () => {
   return (
     <Layout title="Upload" canGoBack>
       <div className="lg:mx-auto lg:w-3/5">
         <div className="flex-x-center mb-6 w-full">
-          <label className="flex-x-center h-48 w-full cursor-pointer rounded-md border-2 border-dashed border-gray-300 text-gray-600 hover:border-cyan-500 hover:text-cyan-500">
+          <label className="flex-x-center aspect-[4/3] w-full cursor-pointer rounded-md border-2 border-dashed border-gray-300 text-gray-600 hover:border-cyan-500 hover:text-cyan-500">
             <svg
               className="h-12 w-12"
               stroke="currentColor"
@@ -60,6 +61,6 @@ function Upload() {
       </div>
     </Layout>
   );
-}
+};
 
 export default Upload;

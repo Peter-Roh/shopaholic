@@ -1,11 +1,12 @@
+import type { NextPage } from "next";
 import Layout from "@/components/layout";
 
-function ItemsDetail() {
+const ItemsDetail: NextPage = () => {
   return (
     <Layout title="item" hasTabBar canGoBack>
       <div className="lg:mx-auto lg:w-3/5">
         <div>
-          <div className="h-96 bg-slate-300" />
+          <div className="aspect-[4/3] w-full bg-slate-300" />
           <div className="flex flex-col">
             <span className="mt-3 text-3xl font-bold text-gray-900">
               Galaxy S22
@@ -55,7 +56,7 @@ function ItemsDetail() {
           <div className="mt-4 grid grid-cols-2 gap-4">
             {[1, 1, 1, 1].map((_, i) => (
               <div key={i}>
-                <div className="mb-2 h-56 w-full bg-slate-300" />
+                <div className="mb-2 aspect-[4/3] w-full bg-slate-300" />
                 <p className="text-gray-900 ">iPhone 12</p>
                 <p className="text-sm font-medium text-gray-900">$6</p>
               </div>
@@ -65,6 +66,6 @@ function ItemsDetail() {
       </div>
     </Layout>
   );
-}
+};
 
 export default ItemsDetail;

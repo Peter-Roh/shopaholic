@@ -1,6 +1,7 @@
+import type { NextPage } from "next";
 import Layout from "@/components/layout";
 
-export default function MyPage() {
+const MyPage: NextPage = () => {
   return (
     <Layout title="My Page" hasTabBar canGoBack>
       <div className="flex w-full flex-col">
@@ -89,4 +90,6 @@ export default function MyPage() {
       </div>
     </Layout>
   );
-}
+};
+
+export default MyPage;

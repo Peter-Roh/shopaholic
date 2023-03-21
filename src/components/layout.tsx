@@ -1,3 +1,4 @@
+import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -8,12 +9,12 @@ type LayoutProps = {
   children: React.ReactNode;
 };
 
-export default function Layout({
+const Layout: NextPage<LayoutProps> = ({
   title,
   canGoBack,
   hasTabBar,
   children,
-}: LayoutProps) {
+}) => {
   const router = useRouter();
 
   return (
@@ -56,7 +57,7 @@ export default function Layout({
                   <Link href="/chats">Chat</Link>
                 </div>
                 <div className="cursor-pointer font-medium text-gray-700 decoration-cyan-500 underline-offset-2 hover:underline">
-                  <Link href="/">Live</Link>
+                  <Link href="/live">Live</Link>
                 </div>
               </div>
             </div>
@@ -159,7 +160,11 @@ export default function Layout({
           </div>
         )}
       </div>
-      <div className="relative min-h-screen bg-gray-100 bg-opacity-30 px-4 pt-16 pb-24">
+      <div
+        className={`relative min-h-screen bg-gray-100 bg-opacity-30 px-4 pt-16 ${
+          hasTabBar ? "pb-24" : ""
+        }`}
+      >
         {children}
       </div>
       {hasTabBar && (
@@ -231,7 +236,7 @@ export default function Layout({
             </Link>
           </div>
           <div className="nav-box">
-            <Link href="/">
+            <Link href="/live">
               <div className="nav-button">
                 <svg
                   className="icon"
@@ -277,4 +282,6 @@ export default function Layout({
       )}
     </div>
   );
-}
+};
+
+export default Layout;
