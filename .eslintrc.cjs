@@ -29,6 +29,15 @@ const config = {
         fixStyle: "separate-type-imports",
       },
     ],
+    "@typescript-eslint/no-misused-promises": [
+      2,
+      {
+        checksVoidReturn: {
+          attributes: false,
+        },
+      },
+    ],
+    "@typescript-eslint/no-non-null-assertion": "off",
   },
 };
 

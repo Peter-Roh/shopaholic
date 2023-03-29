@@ -1,7 +1,11 @@
 import { z } from "zod";
 
-export const helloInput = z
+export const enterInput = z
   .object({
-    text: z.string(),
+    email: z.string().email(),
   })
-  .optional();
+  .required();
+
+export const confirmInput = z.object({
+  token: z.string().min(6).max(6),
+});

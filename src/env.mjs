@@ -7,6 +7,7 @@ const server = z.object({
   DATABASE_URL: z.string().url(),
   NODE_ENV: z.enum(["development", "test", "production"]),
   PORT: z.string(),
+  SESSION_PASSWORD: z.string().min(32),
 });
 
 /**
@@ -27,6 +28,7 @@ const processEnv = {
   DATABASE_URL: process.env.DATABASE_URL,
   NODE_ENV: process.env.NODE_ENV,
   PORT: process.env.PORT,
+  SESSION_PASSWORD: process.env.SESSION_PASSWORD,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

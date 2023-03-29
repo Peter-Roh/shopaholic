@@ -2,8 +2,12 @@ import type { NextPage } from "next";
 import Layout from "@/components/layout";
 import Item from "@/components/Item";
 import Link from "next/link";
+import { api } from "@/utils/api";
 
 const Home: NextPage = () => {
+  const me = api.users.me.useQuery();
+  console.log(me.data);
+
   return (
     <Layout title="Home" hasTabBar canGoBack>
       <div className="mt-14 flex w-full flex-col justify-start lg:mx-auto lg:w-3/5">
