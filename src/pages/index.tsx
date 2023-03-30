@@ -2,11 +2,12 @@ import type { NextPage } from "next";
 import Layout from "@/components/layout";
 import Item from "@/components/Item";
 import Link from "next/link";
-import { api } from "@/utils/api";
+import useUser from "@/libs/client/useUser";
 
 const Home: NextPage = () => {
-  const me = api.users.me.useQuery();
-  console.log(me.data);
+  const { data, isLoading } = useUser();
+  console.log(data);
+  console.log(isLoading);
 
   return (
     <Layout title="Home" hasTabBar canGoBack>

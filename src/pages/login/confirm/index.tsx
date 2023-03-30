@@ -23,7 +23,7 @@ const Confirm: NextPage = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      void router.push("/");
+      void router.replace("/");
     }
   });
 

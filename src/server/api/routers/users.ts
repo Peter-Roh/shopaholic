@@ -1,3 +1,4 @@
+import { privateProcedure } from "./../trpc";
 import { TRPCError } from "@trpc/server";
 import { confirmInput, enterInput } from "./../schema";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
@@ -6,10 +7,10 @@ export const usersRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.user.findMany();
   }),
-  me: publicProcedure.query(async ({ ctx }) => {
+  me: privateProcedure.query(async ({ ctx }) => {
     const profile = await ctx.prisma.user.findUnique({
       where: {
-        id: ctx.session.user?.id,
+        id: ctx.userId,
       },
     });
 

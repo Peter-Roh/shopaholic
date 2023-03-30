@@ -3,9 +3,7 @@
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { prisma } from "@/server/db";
 import { getIronSession } from "iron-session";
-import { sessionOptions } from "libs/sessions";
-
-// TODO authenticate request
+import { sessionOptions } from "@/libs/server/sessions";
 
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const session = await getIronSession(opts.req, opts.res, sessionOptions);
@@ -30,6 +28,8 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 
 // ROUTER & PROCEDURE
 
+import { TRPCError } from "@trpc/server";
+
 export const createTRPCRouter = t.router;
 
 /**
@@ -37,15 +37,22 @@ export const createTRPCRouter = t.router;
  */
 export const publicProcedure = t.procedure;
 
-// TODO authenticated procedure
+const isAuthenticated = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.session.user) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+    });
+  }
 
-// const isAuthenticated = t.middleware(async ({ ctx, next }) => {
-//   return next({
-//     ctx: {},
-//   });
-// });
+  return next({
+    ctx: {
+      prisma: ctx.prisma,
+      userId: ctx.session.user.id,
+    },
+  });
+});
 
 /**
  * Private (authenticated) procedure
  */
-// export const privateProcedure = t.procedure.use(isAuthenticated);
+export const privateProcedure = t.procedure.use(isAuthenticated);
