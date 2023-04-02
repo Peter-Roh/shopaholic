@@ -1,7 +1,10 @@
 import type { NextPage } from "next";
 import Layout from "@/components/layout";
+import useUser from "@/libs/client/useUser";
 
 const MyPage: NextPage = () => {
+  const { data } = useUser(true);
+
   return (
     <Layout title="My Page" hasTabBar canGoBack>
       <div className="flex w-full flex-col">
@@ -10,7 +13,7 @@ const MyPage: NextPage = () => {
             <div className="h-20 w-20 rounded-full bg-slate-500" />
             <div className="flex flex-col">
               <span className="text-xl font-semibold text-gray-900">
-                Peter Roh
+                {data?.name}
               </span>
               <span className="text-sm text-gray-700">Edit profile &rarr;</span>
             </div>

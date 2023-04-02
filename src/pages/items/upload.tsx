@@ -27,6 +27,17 @@ const Upload: NextPage = () => {
         <div className="mb-4">
           <label
             className="mb-2 block text-base font-medium text-gray-700"
+            htmlFor="category"
+          >
+            Category
+          </label>
+          <div className="flex-x-center relative rounded-md shadow-md">
+            {/* TODO */}
+          </div>
+        </div>
+        <div className="mb-4">
+          <label
+            className="mb-2 block text-base font-medium text-gray-700"
             htmlFor="price"
           >
             Price

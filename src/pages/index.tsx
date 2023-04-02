@@ -7,7 +7,7 @@ import useUser from "@/libs/client/useUser";
 const Home: NextPage = () => {
   const { data, isLoading } = useUser();
   console.log(data);
-  console.log(isLoading);
+  console.log("isLoading: ", isLoading);
 
   return (
     <Layout title="Home" hasTabBar canGoBack>
