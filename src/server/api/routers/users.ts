@@ -21,7 +21,7 @@ export const usersRouter = createTRPCRouter({
     const name = email.split("@")[0] || "Anonymous"; // email 주소 앞부분을 이름으로
     const payload = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const token = await ctx.prisma.token.create({
+    await ctx.prisma.token.create({
       data: {
         payload,
         user: {
@@ -38,7 +38,7 @@ export const usersRouter = createTRPCRouter({
       },
     });
 
-    // TODO mail
+    return payload;
   }),
   confirm: publicProcedure
     .input(confirmInput)

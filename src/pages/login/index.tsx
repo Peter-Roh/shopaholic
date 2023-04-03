@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterInputs, api } from "@/utils/api";
 import { toast } from "react-hot-toast";
 import { enterInput } from "@/server/api/schema";
+import emailjs from "@emailjs/browser";
 
 type FormValues = RouterInputs["users"]["login"];
 
@@ -13,12 +14,33 @@ const Login: NextPage = () => {
     resolver: zodResolver(enterInput),
   });
 
-  const { mutate, isLoading, isSuccess } = api.users.login.useMutation();
+  const { mutateAsync, isLoading, isSuccess } = api.users.login.useMutation();
 
-  const onValid: SubmitHandler<FormValues> = ({ email }) => {
-    mutate({
-      email,
-    });
+  const onValid: SubmitHandler<FormValues> = async ({ email }) => {
+    if (!isSuccess) {
+      await mutateAsync({
+        email,
+      }).then((token) => {
+        console.log(token);
+        // * 계속 메일 보내지 않도록 개발 중 주석 처리
+
+        // const templateParams = {
+        //   from_name: "Shopaholic",
+        //   message: `${
+        //     process.env.NODE_ENV === "development"
+        //       ? `http://localhost:${process.env.PORT ?? 3000}`
+        //       : `https://${process.env.VERCEL_URL!}`
+        //   }/login/confirm?token=${token}`,
+        // };
+
+        // void emailjs.send(
+        //   process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        //   process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        //   templateParams,
+        //   process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+        // );
+      });
+    }
   };
 
   const onError = () => {

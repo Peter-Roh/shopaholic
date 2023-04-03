@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import type { NextPage } from "next";
 import type { ParsedUrlQuery } from "querystring";
+import { toast } from "react-hot-toast";
+import type { TRPCError } from "@trpc/server";
 
 interface ParsedUrlQueryForPage extends ParsedUrlQuery {
   token: string;
@@ -11,15 +13,20 @@ interface ParsedUrlQueryForPage extends ParsedUrlQuery {
 const Confirm: NextPage = () => {
   const router = useRouter();
   const { token } = router.query as ParsedUrlQueryForPage;
-  const { mutate, isSuccess } = api.users.confirm.useMutation();
+  const { mutateAsync, isSuccess } = api.users.confirm.useMutation();
 
   useEffect(() => {
-    if (token) {
-      mutate({
-        token,
-      });
+    async function checkToken() {
+      if (token) {
+        await mutateAsync({
+          token,
+        }).catch((err: TRPCError) => {
+          toast.error(err.message);
+        });
+      }
     }
-  }, [token, mutate]);
+    void checkToken();
+  }, [token, mutateAsync]);
 
   useEffect(() => {
     if (isSuccess) {
