@@ -1,7 +1,23 @@
 import type { NextPage } from "next";
 import Layout from "@/components/layout";
+import { api } from "@/utils/api";
+import { useState } from "react";
+import type { Category, Subcategory } from "@prisma/client";
 
 const Upload: NextPage = () => {
+  const [category, setCategory] = useState<Category>();
+  const [subcategory, setSubcategory] = useState<Subcategory>();
+
+  const { data: data1 } = api.categories.getCategory.useQuery();
+  const { data: data2 } = api.categories.getSubcategory.useQuery(
+    {
+      categoryId: category ? category.id : -1,
+    },
+    {
+      enabled: category !== undefined,
+    }
+  );
+
   return (
     <Layout title="Upload" canGoBack>
       <div className="lg:mx-auto lg:w-3/5">
@@ -24,17 +40,89 @@ const Upload: NextPage = () => {
             <input className="hidden" type="file" />
           </label>
         </div>
-        <div className="mb-4">
+        <div className="mb-4 w-full">
           <label
             className="mb-2 block text-base font-medium text-gray-700"
             htmlFor="category"
           >
             Category
           </label>
-          <div className="flex-x-center relative rounded-md shadow-md">
-            {/* TODO */}
+          <div className="w-full">
+            <div className="dropdown-bottom dropdown w-full">
+              <label
+                tabIndex={0}
+                className="flex-x-center block w-full rounded-md border border-transparent bg-cyan-500 py-2 px-4 text-center text-sm font-medium text-white hover:bg-cyan-600"
+              >
+                {category ? category.name : "Select category"}
+              </label>
+              <ul
+                tabIndex={0}
+                className="dropdown-content menu rounded-box w-full bg-base-100 p-2 shadow-md"
+              >
+                {data1?.map((elt) => {
+                  return (
+                    <li
+                      key={elt.id}
+                      className="py-2 px-4 font-medium hover:bg-slate-200"
+                      onClick={() => {
+                        const elem = document.activeElement;
+                        if (elem && elem instanceof HTMLElement) {
+                          elem?.blur();
+                        }
+                        setCategory(elt);
+                        setSubcategory(undefined);
+                      }}
+                    >
+                      {elt.name}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </div>
         </div>
+        {category && data2 && data2.length > 0 && (
+          <div className="mb-4 w-full">
+            <label
+              className="mb-2 block text-base font-medium text-gray-700"
+              htmlFor="category"
+            >
+              Subcategory
+            </label>
+            <div className="w-full">
+              <div className="dropdown-bottom dropdown w-full">
+                <label
+                  tabIndex={0}
+                  className="flex-x-center block w-full rounded-md border border-transparent bg-cyan-500 py-2 px-4 text-center text-sm font-medium text-white hover:bg-cyan-600"
+                >
+                  {subcategory ? subcategory.name : "Select subcategory"}
+                </label>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content menu rounded-box w-full bg-base-100 p-2 shadow-md"
+                >
+                  {data2.map((elt) => {
+                    return (
+                      <li
+                        key={elt.id}
+                        className="py-2 px-4 font-medium hover:bg-slate-200"
+                        onClick={() => {
+                          const elem = document.activeElement;
+                          if (elem && elem instanceof HTMLElement) {
+                            elem?.blur();
+                          }
+                          setSubcategory(elt);
+                        }}
+                      >
+                        {elt.name}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="mb-4">
           <label
             className="mb-2 block text-base font-medium text-gray-700"

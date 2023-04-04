@@ -33,53 +33,39 @@ model Token {
   @@index([userId])
 }
 
-model Category1 {
-  id        Int         @id @default(autoincrement())
-  name      String      @unique
-  Category2 Category2[]
-  Product   Product[]
+model Category {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique
+  Subcategory Subcategory[]
+  Product     Product[]
 }
 
-model Category2 {
-  id          Int         @id @default(autoincrement())
-  name        String      @unique
-  category1   Category1   @relation(fields: [category1Id], references: [id], onDelete: Cascade)
-  category1Id Int
-  Category3   Category3[]
-  Product     Product[]
+model Subcategory {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId Int
+  Product    Product[]
 
-  @@index([category1Id])
-}
-
-model Category3 {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique
-  category2   Category2 @relation(fields: [category2Id], references: [id], onDelete: Cascade)
-  category2Id Int
-  Product     Product[]
-
-  @@index([category2Id])
+  @@index([categoryId])
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
-  name        String
-  image       String
-  price       Int
-  description String    @db.MediumText
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      Int
-  category1   Category1 @relation(fields: [category1Id], references: [id], onDelete: Cascade)
-  category1Id Int
-  category2   Category2 @relation(fields: [category2Id], references: [id], onDelete: Cascade)
-  category2Id Int
-  category3   Category3 @relation(fields: [category3Id], references: [id], onDelete: Cascade)
-  category3Id Int
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            Int         @id @default(autoincrement())
+  name          String
+  image         String
+  price         Int
+  description   String      @db.MediumText
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int
+  category      Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId    Int
+  subcategory   Subcategory @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
+  subcategoryId Int
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
   @@index([userId])
-  @@index([category1Id])
-  @@index([category2Id])
-  @@index([category3Id])
+  @@index([categoryId])
+  @@index([subcategoryId])
 }
