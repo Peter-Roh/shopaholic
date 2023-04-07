@@ -1,9 +1,9 @@
 import type { NextPage } from "next";
-import Layout from "@/components/layout";
+import Layout from "@/components/Layout";
 import useUser from "@/libs/client/useUser";
 
 const MyPage: NextPage = () => {
-  const { data } = useUser(true);
+  const { data } = useUser();
 
   return (
     <Layout title="My Page" hasTabBar canGoBack>

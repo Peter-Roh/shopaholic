@@ -12,14 +12,14 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
-  email     String    @unique
+  email     String   @unique
   avatar    String?
-  products  Product[]
+  items     Item[]
   tokens    Token[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Token {
@@ -37,20 +37,20 @@ model Category {
   id          Int           @id @default(autoincrement())
   name        String        @unique
   Subcategory Subcategory[]
-  Product     Product[]
+  Item        Item[]
 }
 
 model Subcategory {
-  id         Int       @id @default(autoincrement())
-  name       String    @unique
-  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId Int
-  Product    Product[]
+  Item       Item[]
 
   @@index([categoryId])
 }
 
-model Product {
+model Item {
   id            Int         @id @default(autoincrement())
   name          String
   image         String

@@ -1,13 +1,11 @@
 import type { NextPage } from "next";
-import Layout from "@/components/layout";
+import Layout from "@/components/Layout";
 import Item from "@/components/Item";
 import Link from "next/link";
 import useUser from "@/libs/client/useUser";
 
 const Home: NextPage = () => {
-  const { data, isLoading } = useUser();
-  console.log(data);
-  console.log("isLoading: ", isLoading);
+  const { data } = useUser();
 
   return (
     <Layout title="Home" hasTabBar canGoBack>
@@ -16,7 +14,7 @@ const Home: NextPage = () => {
         {/* TODO: carousel */}
         <div className="mt-4 flex flex-col space-y-2 divide-y">
           {[1, 1, 1, 1, 1].map((_, i) => (
-            <Item key={i}></Item>
+            <Item key={i} />
           ))}
         </div>
       </div>

@@ -23,3 +23,5 @@ This is a personal web project for my portfolio.
 - Responsive Design
 
 - Full-stack typesafety
+
+- Passwordless - login

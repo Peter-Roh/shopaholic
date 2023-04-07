@@ -1,4 +1,4 @@
-import Layout from "@/components/layout";
+import Layout from "@/components/Layout";
 import type { NextPage } from "next";
 
 const LiveStream: NextPage = () => {
@@ -91,7 +91,7 @@ const LiveStream: NextPage = () => {
           <div className="relative flex w-full items-center px-2">
             <input
               type="text"
-              className="input ring-focus w-full rounded-2xl border-gray-300 pr-12 shadow-sm focus:border-cyan-500"
+              className="ring-focus input w-full rounded-2xl border-gray-300 pr-12 shadow-sm focus:border-cyan-500"
             />
             <div className="absolute inset-y-0 right-2 flex py-1 pr-1">
               <button className="ring-focus-2 flex items-center rounded-2xl bg-cyan-500 px-3 text-sm text-white hover:bg-cyan-600">

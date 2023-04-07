@@ -10,6 +10,20 @@ export function middleware(req: NextRequest) {
   if (isBot) {
     return NextResponse.redirect(new URL("/error", req.url));
   }
+
+  if (
+    !req.cookies.get("shopaholic")?.value &&
+    !req.nextUrl.pathname.startsWith("/login")
+  ) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  if (
+    req.cookies.get("shopaholic")?.value &&
+    req.nextUrl.pathname.startsWith("/login")
+  ) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
 }
 
 export const config = {

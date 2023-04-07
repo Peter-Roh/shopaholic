@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import Layout from "@/components/layout";
+import Layout from "@/components/Layout";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterInputs, api } from "@/utils/api";

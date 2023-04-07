@@ -13,3 +13,13 @@ export const confirmInput = z.object({
 export const subcategoryInput = z.object({
   categoryId: z.number(),
 });
+
+export const itemsInput = z.object({
+  name: z.string(),
+  image: z.string(),
+  price: z.number().int().nonnegative(),
+  description: z.string(),
+  userId: z.number().int().nonnegative(),
+  categoryId: z.number().int().nonnegative(),
+  subcategoryId: z.number().int().nonnegative(),
+});

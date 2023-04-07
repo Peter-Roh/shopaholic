@@ -2,18 +2,20 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { api } from "@/utils/api";
 
-export default function useUser(redirect = false) {
-  const { data, error } = api.users.me.useQuery();
+export default function useUser() {
+  const { data, error, isError } = api.users.me.useQuery(undefined, {
+    staleTime: 1000 * 60 * 60 * 24, // one day
+  });
   const router = useRouter();
 
   useEffect(() => {
-    if (error && redirect) {
+    if (isError) {
       void router.replace("/login");
     }
-  }, [router, error, redirect]);
+  }, [router, isError]);
 
   return {
-    data,
+    data: data!,
     isLoading: !data && !error,
   };
 }
