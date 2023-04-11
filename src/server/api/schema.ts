@@ -23,3 +23,13 @@ export const itemsInput = z.object({
   categoryId: z.number().int().nonnegative(),
   subcategoryId: z.number().int().nonnegative(),
 });
+
+export const editInput = z.object({
+  id: z.number().int().nonnegative(),
+  name: z.string().optional(),
+  avatar: z.string().optional(),
+});
+
+export const deleteInput = z.object({
+  id: z.number().int().nonnegative(),
+});

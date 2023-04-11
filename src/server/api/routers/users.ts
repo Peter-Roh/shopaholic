@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { confirmInput, enterInput } from "./../schema";
+import { confirmInput, deleteInput, editInput, enterInput } from "./../schema";
 import {
   createTRPCRouter,
   publicProcedure,
@@ -68,5 +68,44 @@ export const usersRouter = createTRPCRouter({
           userId: foundToken.userId,
         },
       });
+    }),
+  edit: privateProcedure.input(editInput).mutation(async ({ ctx, input }) => {
+    const { id, name, avatar } = input;
+
+    const user = await ctx.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "The user is not found.",
+      });
+    }
+
+    await ctx.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        name: name ?? user.name,
+        avatar: avatar ?? user.avatar,
+      },
+    });
+  }),
+  delete: privateProcedure
+    .input(deleteInput)
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input;
+
+      await ctx.prisma.user.delete({
+        where: {
+          id,
+        },
+      });
+
+      ctx.session.destroy();
     }),
 });

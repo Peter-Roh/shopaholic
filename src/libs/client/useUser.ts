@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { api } from "@/utils/api";
 
 export default function useUser() {
-  const { data, error, isError } = api.users.me.useQuery(undefined, {
+  const { data, error, isError, refetch } = api.users.me.useQuery(undefined, {
     staleTime: 1000 * 60 * 60 * 24, // one day
   });
   const router = useRouter();
@@ -16,6 +16,7 @@ export default function useUser() {
 
   return {
     data: data!,
+    refetch,
     isLoading: !data && !error,
   };
 }

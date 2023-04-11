@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Layout from "@/components/Layout";
 import useUser from "@/libs/client/useUser";
+import Link from "next/link";
 
 const MyPage: NextPage = () => {
   const { data } = useUser();
@@ -12,10 +13,17 @@ const MyPage: NextPage = () => {
           <div className="flex items-center space-x-3 lg:mx-auto lg:w-11/12">
             <div className="h-20 w-20 rounded-full bg-slate-500" />
             <div className="flex flex-col">
-              <span className="text-xl font-semibold text-gray-900">
-                {data?.name}
-              </span>
-              <span className="text-sm text-gray-700">Edit profile &rarr;</span>
+              <div className="flex flex-col">
+                <span className="text-xl font-semibold text-gray-900">
+                  {data?.name}
+                </span>
+                <span className="text-xs text-gray-500">{data?.email}</span>
+              </div>
+              <Link href="/profile/edit">
+                <span className="text-xs font-semibold text-gray-700">
+                  Edit profile &rarr;
+                </span>
+              </Link>
             </div>
           </div>
           <div className="mt-8 flex items-center justify-between lg:mx-auto lg:w-11/12">
