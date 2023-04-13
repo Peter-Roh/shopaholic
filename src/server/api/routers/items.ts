@@ -1,5 +1,7 @@
+import { TRPCError } from "@trpc/server";
 import { itemsInput } from "../schema";
 import { createTRPCRouter, privateProcedure } from "../trpc";
+import { ratelimit } from "@/server/ratelimiter";
 
 export const itemsRouter = createTRPCRouter({
   add: privateProcedure.input(itemsInput).mutation(async ({ ctx, input }) => {
@@ -12,6 +14,15 @@ export const itemsRouter = createTRPCRouter({
       categoryId,
       subcategoryId,
     } = input;
+
+    const { success } = await ratelimit.limit(userId.toString());
+
+    if (!success) {
+      throw new TRPCError({
+        code: "TOO_MANY_REQUESTS",
+        message: "Too many requests have been made.",
+      });
+    }
 
     const item = await ctx.prisma.item.create({
       data: {

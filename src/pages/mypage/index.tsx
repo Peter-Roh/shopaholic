@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import Layout from "@/components/Layout";
 import useUser from "@/libs/client/useUser";
 import Link from "next/link";
+import Footer from "@/components/Footer";
 
 const MyPage: NextPage = () => {
   const { data } = useUser();
@@ -99,6 +100,7 @@ const MyPage: NextPage = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </Layout>
   );
 };

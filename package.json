@@ -19,6 +19,8 @@
     "@trpc/next": "^10.9.0",
     "@trpc/react-query": "^10.9.0",
     "@trpc/server": "^10.18.0",
+    "@upstash/ratelimit": "^0.4.1",
+    "@upstash/redis": "^1.20.2",
     "daisyui": "^2.51.5",
     "iron-session": "^6.3.1",
     "next": "^13.2.1",

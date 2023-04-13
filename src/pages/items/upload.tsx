@@ -273,7 +273,7 @@ const Upload: NextPage = () => {
             />
           </div>
           {/* upload button */}
-          <button className="ring-focus-2 w-full rounded-md border border-transparent bg-cyan-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-cyan-600">
+          <button className="ring-focus-2 mb-2 w-full rounded-md border border-transparent bg-cyan-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-cyan-600">
             Upload Product!
           </button>
         </form>

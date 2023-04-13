@@ -3,17 +3,19 @@ import Layout from "@/components/Layout";
 import useUser from "@/libs/client/useUser";
 import { api, type RouterInputs } from "@/utils/api";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
+import Modal from "@/components/Modal";
 
 type FormValues = RouterInputs["users"]["edit"];
-type DeleteForm = RouterInputs["users"]["delete"];
+type FormDelete = RouterInputs["users"]["delete"];
 
 const ProfileEdit: NextPage = () => {
   const router = useRouter();
   const { data, refetch } = useUser();
   const [checked, setChecked] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   // edit profile
 
@@ -31,6 +33,7 @@ const ProfileEdit: NextPage = () => {
       } else {
         await mutateAsync({ id, name, avatar }).then(async () => {
           await refetch().then(() => {
+            toast.success("Profile edited successfully.");
             void router.push("/mypage");
           });
         });
@@ -50,13 +53,12 @@ const ProfileEdit: NextPage = () => {
     register: registerDelete,
     handleSubmit: handleDeleteAccount,
     setValue: setDeleteValue,
-  } = useForm<DeleteForm>();
+  } = useForm<FormDelete>();
 
-  const onDeleteValid: SubmitHandler<DeleteForm> = async ({ id }) => {
+  const onDeleteValid: SubmitHandler<FormDelete> = async ({ id }) => {
     if (!isDeleteSuccess) {
       await mutateDeleteAsync({ id }).then(() => {
-        // TODO modal 띄우기
-        void router.replace("/login");
+        setModalOpen(true);
       });
     }
   };
@@ -84,6 +86,14 @@ const ProfileEdit: NextPage = () => {
   const onClickCheckbox = () => {
     setChecked(!checked);
   };
+
+  const modalContent = useMemo(() => {
+    return (
+      <div className="flex-x-center my-6 mx-4">
+        Thank you for using our service.
+      </div>
+    );
+  }, []);
 
   return (
     <Layout title="Edit Profile" canGoBack hasTabBar>
@@ -172,6 +182,16 @@ const ProfileEdit: NextPage = () => {
           </div>
         </form>
       </div>
+      <Modal
+        modalType="Confirm"
+        isOpen={modalOpen}
+        content={modalContent}
+        onConfirm={() => {
+          setModalOpen(false);
+          void router.replace("/login");
+        }}
+        confirmText="Confirm"
+      />
     </Layout>
   );
 };

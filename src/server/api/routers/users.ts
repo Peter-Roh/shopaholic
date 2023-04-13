@@ -14,6 +14,10 @@ export const usersRouter = createTRPCRouter({
       },
     });
 
+    if (!profile) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "User Not Found." });
+    }
+
     return profile;
   }),
   login: publicProcedure.input(enterInput).mutation(async ({ ctx, input }) => {

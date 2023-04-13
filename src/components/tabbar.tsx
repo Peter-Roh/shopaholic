@@ -7,14 +7,14 @@ type TabBarProps = {
   router: NextRouter;
 };
 
-type TabBarContent = {
+type TabBarElement = {
   name: string;
   pathname: string;
   icon: JSX.Element;
 };
 
 const TabBar: NextPage<TabBarProps> = ({ router }) => {
-  const tabBarContent: TabBarContent[] = useMemo(
+  const tabBarContent: TabBarElement[] = useMemo(
     () => [
       {
         name: "Home",
@@ -126,7 +126,7 @@ const TabBar: NextPage<TabBarProps> = ({ router }) => {
 
   return (
     <nav className="fixed bottom-0 z-10 flex w-full items-center justify-start border-t bg-white pb-3 pt-3 text-sm font-medium text-gray-700 lg:hidden">
-      {tabBarContent.map((elt: TabBarContent) => {
+      {tabBarContent.map((elt: TabBarElement) => {
         return (
           <div
             key={elt.pathname}

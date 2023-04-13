@@ -9,13 +9,13 @@ type HeaderProps = {
   router: NextRouter;
 };
 
-type DesktopHeader = {
+type DesktopHeaderElement = {
   name: string;
   pathname: string;
 };
 
 const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
-  const desktopHeader: DesktopHeader[] = useMemo(
+  const desktopHeader: DesktopHeaderElement[] = useMemo(
     () => [
       {
         name: "Cart",
@@ -67,7 +67,7 @@ const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
               <Link href="/">Shopaholic</Link>
             </div>
             <div className="ml-16 flex items-center space-x-8">
-              {desktopHeader.map((elt: DesktopHeader) => {
+              {desktopHeader.map((elt: DesktopHeaderElement) => {
                 return (
                   <div
                     key={elt.pathname}
