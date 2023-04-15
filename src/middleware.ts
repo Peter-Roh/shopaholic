@@ -11,6 +11,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/error", req.url));
   }
 
+  // 로그인되지 않은 경우 redirect
   if (
     !req.cookies.get("shopaholic")?.value &&
     !req.nextUrl.pathname.startsWith("/login")
@@ -18,6 +19,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
+  // 로그인된 경우 접근 금지 페이지
   if (
     req.cookies.get("shopaholic")?.value &&
     req.nextUrl.pathname.startsWith("/login")

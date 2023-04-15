@@ -3,7 +3,7 @@ import Layout from "@/components/Layout";
 import useUser from "@/libs/client/useUser";
 import { api, type RouterInputs } from "@/utils/api";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import Modal from "@/components/Modal";
@@ -86,6 +86,11 @@ const ProfileEdit: NextPage = () => {
   const onClickCheckbox = () => {
     setChecked(!checked);
   };
+
+  const onModalConfirm = useCallback(() => {
+    setModalOpen(false);
+    void router.replace("/login");
+  }, [router]);
 
   const modalContent = useMemo(() => {
     return (
@@ -186,10 +191,7 @@ const ProfileEdit: NextPage = () => {
         modalType="Confirm"
         isOpen={modalOpen}
         content={modalContent}
-        onConfirm={() => {
-          setModalOpen(false);
-          void router.replace("/login");
-        }}
+        onConfirm={onModalConfirm}
         confirmText="Confirm"
       />
     </Layout>

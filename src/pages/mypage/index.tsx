@@ -99,6 +99,56 @@ const MyPage: NextPage = () => {
             </div>
           </div>
         </div>
+        <div className="mt-5 space-y-2">
+          <div>
+            <Link href="/mypage/appearance">
+              <div className="flex-x-center rounded-md bg-white py-3 text-sm font-medium text-gray-800 shadow-md lg:mx-auto lg:w-3/5">
+                <div className="flex w-1/3">
+                  <svg
+                    className="icon text-gray-800"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"
+                    />
+                  </svg>
+                  <span className="ml-3">Appearance</span>
+                </div>
+              </div>
+            </Link>
+          </div>
+          <div>
+            <Link href="/mypage/about">
+              <div className="flex-x-center rounded-md bg-white py-3 text-sm font-medium text-gray-800 shadow-md lg:mx-auto lg:w-3/5">
+                <div className="flex w-1/3">
+                  <svg
+                    className="icon text-gray-800"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                  <span className="ml-3">About</span>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
       </div>
       <Footer />
     </Layout>
