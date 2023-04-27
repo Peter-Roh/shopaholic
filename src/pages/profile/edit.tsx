@@ -78,8 +78,8 @@ const ProfileEdit: NextPage = () => {
 
   const handleSubmitEditForm = async (e: React.BaseSyntheticEvent) => {
     e.preventDefault();
-    setLoadingModalOpen(true);
     if (selectedFile) {
+      setLoadingModalOpen(true);
       // get a one-time upload URL from Cloudflare Direct Creator Upload
       await cloudflareMutateAsync().then(async (res) => {
         const { uploadURL } = res.result;
@@ -199,7 +199,7 @@ const ProfileEdit: NextPage = () => {
                       src={avatarPreview}
                       sizes="80px"
                       fill={true}
-                      className="rounded-full"
+                      className="rounded-full object-cover"
                     />
                   ) : data?.avatar ? (
                     <Image

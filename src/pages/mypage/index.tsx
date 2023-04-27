@@ -49,7 +49,7 @@ const MyPage: NextPage = () => {
             </div>
           </div>
           <div className="mt-8 flex items-center justify-between lg:mx-auto lg:w-11/12">
-            <div className="flex-y-center">
+            <div className="flex-y-center w-24">
               <div className="flex-x-center h-14 w-14 rounded-full bg-cyan-400 text-white">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -74,7 +74,7 @@ const MyPage: NextPage = () => {
                 Sales Report
               </span>
             </div>
-            <div className="flex-y-center">
+            <div className="flex-y-center w-24">
               <div className="flex-x-center h-14 w-14 rounded-full bg-cyan-400 text-white">
                 <svg
                   className="icon"
@@ -96,7 +96,7 @@ const MyPage: NextPage = () => {
                 Your Orders
               </span>
             </div>
-            <div className="flex-y-center">
+            <div className="flex-y-center w-24">
               <div className="flex-x-center h-14 w-14 rounded-full bg-cyan-400 text-white">
                 <svg
                   className="icon"
