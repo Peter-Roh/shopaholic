@@ -122,7 +122,9 @@ const Upload: NextPage = () => {
               <input className="hidden" type="file" />
             </label>
           </div>
-          {/* name */}
+          {
+            // * name
+          }
           <div>
             <div>
               <label className="mb-2 block text-base font-medium text-gray-700">
@@ -141,7 +143,9 @@ const Upload: NextPage = () => {
               />
             </div>
           </div>
-          {/* category */}
+          {
+            // * category
+          }
           <div className="mb-4 w-full">
             <label
               className="mb-2 block text-base font-medium text-gray-700"
@@ -184,7 +188,9 @@ const Upload: NextPage = () => {
               </div>
             </div>
           </div>
-          {/* subcategory */}
+          {
+            // * subcategory
+          }
           {category && data2 && data2.length > 0 && (
             <div className="mb-4 w-full">
               <label
@@ -228,7 +234,9 @@ const Upload: NextPage = () => {
               </div>
             </div>
           )}
-          {/* price */}
+          {
+            // * price
+          }
           <div className="mb-4">
             <label
               className="mb-2 block text-base font-medium text-gray-700"
@@ -258,7 +266,9 @@ const Upload: NextPage = () => {
               </div>
             </div>
           </div>
-          {/* description */}
+          {
+            // * description
+          }
           <div className="mb-4">
             <label className="mb-2 block text-base font-medium text-gray-700">
               Description
@@ -272,7 +282,9 @@ const Upload: NextPage = () => {
               rows={4}
             />
           </div>
-          {/* upload button */}
+          {
+            // * upload button
+          }
           <button className="ring-focus-2 mb-2 w-full rounded-md border border-transparent bg-cyan-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-cyan-600">
             Upload Product!
           </button>

@@ -33,3 +33,13 @@ export const editInput = z.object({
 export const deleteInput = z.object({
   id: z.number().int().nonnegative(),
 });
+
+export const cloudflareFileOutput = z.object({
+  errors: z.string().array(),
+  messages: z.string().array(),
+  success: z.boolean(),
+  result: z.object({
+    id: z.string(),
+    uploadURL: z.string(),
+  }),
+});

@@ -30,6 +30,8 @@ This is a personal web project for my portfolio.
 
 - Rate limiting using upstash
 
+- Store and optimize images using Cloudflare Images
+
 ## Installation
 
 ### 1. Clone the repository

@@ -3,6 +3,8 @@ import Layout from "@/components/Layout";
 import useUser from "@/libs/client/useUser";
 import Link from "next/link";
 import Footer from "@/components/Footer";
+import Image from "next/image";
+import DefaultUser from "../../../public/default_user.png";
 
 const MyPage: NextPage = () => {
   const { data } = useUser();
@@ -12,7 +14,26 @@ const MyPage: NextPage = () => {
       <div className="flex w-full flex-col">
         <div className="mt-8 rounded-md bg-white px-4 py-4 shadow-md lg:mx-auto lg:w-3/5">
           <div className="flex items-center space-x-3 lg:mx-auto lg:w-11/12">
-            <div className="h-20 w-20 rounded-full bg-slate-500" />
+            <div className="relative h-20 w-20 rounded-full">
+              {data?.avatar ? (
+                <Image
+                  alt="profile"
+                  src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${data.avatar}/avatar`}
+                  sizes="80px"
+                  fill={true}
+                  className="rounded-full"
+                />
+              ) : (
+                <Image
+                  alt="no-profile"
+                  src={DefaultUser}
+                  sizes="80px"
+                  fill={true}
+                  className="rounded-full"
+                  priority={true}
+                />
+              )}
+            </div>
             <div className="flex flex-col">
               <div className="flex flex-col">
                 <span className="text-xl font-semibold text-gray-900">
