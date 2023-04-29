@@ -27,7 +27,7 @@ const Layout: NextPage<LayoutProps> = ({
         {router.pathname === "/" && <CategoryBar />}
       </div>
       <div
-        className={`relative flex min-h-screen flex-col bg-gray-100 bg-opacity-30 px-4 pt-16 ${
+        className={`relative flex min-h-screen flex-col bg-gray-100 bg-opacity-30 px-4 pt-16 dark:bg-slate-700 ${
           hasTabBar ? "pb-24 lg:pb-0" : ""
         }`}
       >
