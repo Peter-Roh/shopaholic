@@ -172,7 +172,7 @@ const ProfileEdit: NextPage = () => {
               Account Information
             </span>
             <div className="mt-5">
-              <span className="text-base font-medium text-gray-700">
+              <span className="text-base font-medium text-gray-700 dark:text-slate-100">
                 Username
               </span>
               <input
@@ -188,7 +188,7 @@ const ProfileEdit: NextPage = () => {
           <div className="my-8">
             <span className="text-lg font-semibold text-cyan-500">Profile</span>
             <div className="mt-5">
-              <span className="text-base font-medium text-gray-700">
+              <span className="text-base font-medium text-gray-700 dark:text-slate-100">
                 Profile Image
               </span>
               <div className="mt-4 flex items-center space-x-3">
@@ -222,7 +222,7 @@ const ProfileEdit: NextPage = () => {
                 </div>
                 <label
                   htmlFor="avatar"
-                  className="rounded-md border border-gray-300 py-2 px-4 text-sm font-semibold"
+                  className="rounded-md border border-gray-300 py-2 px-4 text-sm font-semibold dark:text-slate-100"
                 >
                   Change
                   <input
@@ -250,7 +250,7 @@ const ProfileEdit: NextPage = () => {
               Delete Account
             </span>
             <div className="mt-5 flex flex-col">
-              <span className="mb-2 text-sm font-medium leading-5 text-gray-700">
+              <span className="mb-2 text-sm font-medium leading-5 text-gray-700 dark:text-slate-100">
                 This is a permanent action and it cannot be undone. After you
                 delete your account no one will be able to recover it.
               </span>
@@ -262,7 +262,7 @@ const ProfileEdit: NextPage = () => {
                   className="indeterminate::bg-red-700 appearance-none rounded-sm text-red-700 checked:bg-red-700 focus:ring-red-600"
                   onClick={onClickCheckbox}
                 />
-                <span className="ml-1 text-sm font-medium leading-5 text-gray-700">
+                <span className="ml-1 text-sm font-medium leading-5 text-gray-700 dark:text-slate-100">
                   I understand this action is permanent and no one will be able
                   to undo it.
                 </span>

@@ -29,19 +29,19 @@ type ModalProps = ModalConfirm | ModalCancel | ModalLoading;
 const Modal: NextPage<ModalProps> = (props) => {
   return (
     <div
-      className={`absolute top-0 left-0 h-screen w-screen bg-gray-500 bg-opacity-50 ${
+      className={`absolute top-0 left-0 h-screen w-screen bg-gray-500 bg-opacity-50 dark:bg-opacity-70 ${
         props.isOpen ? "flex-x-center" : "hidden"
       }`}
     >
-      <div className="flex flex-col rounded-md bg-white">
+      <div className="flex flex-col rounded-md bg-white dark:bg-slate-800 dark:text-slate-200">
         {props.modalType !== "Loading" ? (
           props.content
         ) : (
           <>
-            <div className="flex-x-center my-6 mx-4">
+            <div className="flex-x-center my-6 mx-4 dark:text-slate-200">
               <svg
                 aria-hidden="true"
-                className="mr-4 h-5 w-5 animate-spin fill-yellow-500 text-gray-200 dark:text-gray-600"
+                className="mr-4 h-5 w-5 animate-spin fill-yellow-500 text-gray-200 dark:text-slate-200"
                 viewBox="0 0 100 101"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"

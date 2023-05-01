@@ -12,7 +12,7 @@ const MyPage: NextPage = () => {
   return (
     <Layout title="My Page" hasTabBar canGoBack>
       <div className="flex w-full flex-col">
-        <div className="mt-8 rounded-md bg-white px-4 py-4 shadow-md lg:mx-auto lg:w-3/5">
+        <div className="mt-8 rounded-md bg-white px-4 py-4 shadow-md dark:bg-gray-700 lg:mx-auto lg:w-3/5">
           <div className="flex items-center space-x-3 lg:mx-auto lg:w-11/12">
             <div className="relative h-20 w-20 rounded-full">
               {data?.avatar ? (
@@ -36,13 +36,13 @@ const MyPage: NextPage = () => {
             </div>
             <div className="flex flex-col">
               <div className="flex flex-col">
-                <span className="text-xl font-semibold text-gray-900">
+                <span className="text-xl font-semibold text-gray-900 dark:text-slate-100">
                   {data?.name}
                 </span>
                 <span className="text-xs text-gray-500">{data?.email}</span>
               </div>
               <Link href="/profile/edit">
-                <span className="text-xs font-semibold text-gray-700">
+                <span className="text-xs font-semibold text-gray-700 dark:text-slate-200">
                   Edit profile &rarr;
                 </span>
               </Link>
@@ -70,7 +70,7 @@ const MyPage: NextPage = () => {
                   <path d="M5 15v1m0 -8v1" />
                 </svg>
               </div>
-              <span className="mt-2 text-sm font-medium text-gray-700">
+              <span className="mt-2 text-sm font-medium text-gray-700 dark:text-slate-100">
                 Sales Report
               </span>
             </div>
@@ -92,7 +92,7 @@ const MyPage: NextPage = () => {
                   />
                 </svg>
               </div>
-              <span className="mt-2 text-sm font-medium text-gray-700">
+              <span className="mt-2 text-sm font-medium text-gray-700 dark:text-slate-100">
                 Your Orders
               </span>
             </div>
@@ -114,7 +114,7 @@ const MyPage: NextPage = () => {
                   />
                 </svg>
               </div>
-              <span className="mt-2 text-sm font-medium text-gray-700">
+              <span className="mt-2 text-sm font-medium text-gray-700 dark:text-slate-100">
                 watchlist
               </span>
             </div>
@@ -123,10 +123,10 @@ const MyPage: NextPage = () => {
         <div className="mt-5 space-y-2">
           <div>
             <Link href="/mypage/appearance">
-              <div className="flex-x-center rounded-md bg-white py-3 text-sm font-medium text-gray-800 shadow-md lg:mx-auto lg:w-3/5">
+              <div className="flex-x-center rounded-md bg-white py-3 text-sm font-medium text-gray-800 shadow-md dark:bg-gray-700 dark:text-slate-100 lg:mx-auto lg:w-3/5">
                 <div className="flex w-1/3">
                   <svg
-                    className="icon text-gray-800"
+                    className="icon text-gray-800 dark:bg-gray-700 dark:text-slate-100"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth={1.5}
@@ -147,10 +147,10 @@ const MyPage: NextPage = () => {
           </div>
           <div>
             <Link href="/mypage/about">
-              <div className="flex-x-center rounded-md bg-white py-3 text-sm font-medium text-gray-800 shadow-md lg:mx-auto lg:w-3/5">
+              <div className="flex-x-center rounded-md bg-white py-3 text-sm font-medium text-gray-800 shadow-md dark:bg-gray-700 dark:text-slate-100 lg:mx-auto lg:w-3/5">
                 <div className="flex w-1/3">
                   <svg
-                    className="icon text-gray-800"
+                    className="icon text-gray-800 dark:bg-gray-700 dark:text-slate-100"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth={1.5}

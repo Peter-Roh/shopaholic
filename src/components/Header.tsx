@@ -39,7 +39,7 @@ const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
 
   return (
     <>
-      <div className="flex items-center justify-between border-b bg-white py-3 text-lg font-medium text-gray-700 dark:bg-slate-700 dark:text-white lg:hidden">
+      <div className="flex items-center justify-between border-b bg-white py-3 text-lg font-medium text-gray-700 dark:bg-slate-800 dark:text-white lg:hidden">
         <div className="flex-x-center h-max w-8">
           {canGoBack && (
             <button onClick={() => router.back()}>
@@ -64,7 +64,7 @@ const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
         <span>{title}</span>
         <div className="flex-x-center h-max w-8"></div>
       </div>
-      <div className="hidden w-full items-center justify-between border-b bg-white px-4 py-3 shadow-sm dark:bg-slate-700 lg:flex">
+      <div className="hidden w-full items-center justify-between border-b bg-white px-4 py-3 shadow-sm dark:bg-slate-800 lg:flex">
         <div className="mx-auto flex h-max w-3/5 items-center justify-between">
           <div className="flex items-center pl-3 dark:text-white">
             <div>

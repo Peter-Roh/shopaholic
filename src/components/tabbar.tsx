@@ -125,7 +125,7 @@ const TabBar: NextPage<TabBarProps> = ({ router }) => {
   );
 
   return (
-    <nav className="fixed bottom-0 z-10 flex w-full items-center justify-start border-t bg-white pb-3 pt-3 text-sm font-medium text-gray-700 lg:hidden">
+    <nav className="fixed bottom-0 z-10 flex w-full items-center justify-start border-t bg-white pb-3 pt-3 text-sm font-medium text-gray-700 dark:bg-slate-800 dark:text-slate-100 lg:hidden">
       {tabBarContent.map((elt: TabBarElement) => {
         return (
           <div
@@ -133,7 +133,7 @@ const TabBar: NextPage<TabBarProps> = ({ router }) => {
             className={`nav-box ${
               router.pathname === elt.pathname
                 ? "text-cyan-500"
-                : "text-gray-700"
+                : "text-gray-700 dark:text-slate-100"
             }`}
           >
             <Link href={elt.pathname}>

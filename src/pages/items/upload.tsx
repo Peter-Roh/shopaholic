@@ -127,7 +127,7 @@ const Upload: NextPage = () => {
           }
           <div>
             <div>
-              <label className="mb-2 block text-base font-medium text-gray-700">
+              <label className="mb-2 block text-base font-medium text-gray-700 dark:text-slate-100">
                 Name
               </label>
             </div>
@@ -148,7 +148,7 @@ const Upload: NextPage = () => {
           }
           <div className="mb-4 w-full">
             <label
-              className="mb-2 block text-base font-medium text-gray-700"
+              className="mb-2 block text-base font-medium text-gray-700 dark:text-slate-100"
               htmlFor="category"
             >
               Category
@@ -163,13 +163,13 @@ const Upload: NextPage = () => {
                 </label>
                 <ul
                   tabIndex={0}
-                  className="dropdown-content menu rounded-box w-full bg-base-100 p-2 shadow-md"
+                  className="dropdown-content menu rounded-box w-full bg-base-100 p-2 shadow-md dark:bg-gray-800"
                 >
                   {data1?.map((elt) => {
                     return (
                       <li
                         key={elt.id}
-                        className="py-2 px-4 font-medium hover:bg-slate-200"
+                        className="py-2 px-4 font-medium hover:bg-slate-200 dark:text-slate-100 dark:hover:bg-slate-600"
                         onClick={() => {
                           const elem = document.activeElement;
                           if (elem && elem instanceof HTMLElement) {
@@ -194,7 +194,7 @@ const Upload: NextPage = () => {
           {category && data2 && data2.length > 0 && (
             <div className="mb-4 w-full">
               <label
-                className="mb-2 block text-base font-medium text-gray-700"
+                className="mb-2 block text-base font-medium text-gray-700 dark:text-slate-100"
                 htmlFor="category"
               >
                 Subcategory
@@ -209,13 +209,13 @@ const Upload: NextPage = () => {
                   </label>
                   <ul
                     tabIndex={0}
-                    className="dropdown-content menu rounded-box w-full bg-base-100 p-2 shadow-md"
+                    className="dropdown-content menu rounded-box w-full bg-base-100 p-2 shadow-md dark:bg-gray-800"
                   >
                     {data2.map((elt) => {
                       return (
                         <li
                           key={elt.id}
-                          className="py-2 px-4 font-medium hover:bg-slate-200"
+                          className="py-2 px-4 font-medium hover:bg-slate-200 dark:text-slate-100 dark:hover:bg-slate-600"
                           onClick={() => {
                             const elem = document.activeElement;
                             if (elem && elem instanceof HTMLElement) {
@@ -239,7 +239,7 @@ const Upload: NextPage = () => {
           }
           <div className="mb-4">
             <label
-              className="mb-2 block text-base font-medium text-gray-700"
+              className="mb-2 block text-base font-medium text-gray-700 dark:text-slate-100"
               htmlFor="price"
             >
               Price
@@ -270,7 +270,7 @@ const Upload: NextPage = () => {
             // * description
           }
           <div className="mb-4">
-            <label className="mb-2 block text-base font-medium text-gray-700">
+            <label className="mb-2 block text-base font-medium text-gray-700 dark:text-slate-100">
               Description
             </label>
             <textarea
@@ -285,7 +285,7 @@ const Upload: NextPage = () => {
           {
             // * upload button
           }
-          <button className="ring-focus-2 mb-2 w-full rounded-md border border-transparent bg-cyan-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-cyan-600">
+          <button className="ring-focus-2 mb-4 w-full rounded-md border border-transparent bg-cyan-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-cyan-600">
             Upload Product!
           </button>
         </form>
