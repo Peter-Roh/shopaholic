@@ -50,7 +50,9 @@ const Login: NextPage = () => {
   return (
     <Layout title="Login" canGoBack>
       <div className="flex-y-center">
-        <p className="mt-16 text-xl font-bold">Enter to Shopaholic</p>
+        <p className="mt-16 text-xl font-bold dark:text-slate-100">
+          Enter to Shopaholic
+        </p>
         <div className="flex-y-center mt-8 w-full px-4 lg:w-3/5">
           <form
             className="flex-y-center w-full px-4"
@@ -104,7 +106,9 @@ const Login: NextPage = () => {
             <div className="relative">
               <div className="absolute w-full border-t border-gray-300 " />
               <div className="relative -top-3 text-center">
-                <span className="bg-white px-2">or enter with</span>
+                <span className="bg-white px-2 dark:bg-gray-800 dark:text-slate-100">
+                  or enter with
+                </span>
               </div>
             </div>
           </div>

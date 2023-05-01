@@ -21,7 +21,7 @@ const CategoryBar: NextPage = () => {
     <div className="no-scrollbar overflow-x-scroll border-b bg-white py-3 text-lg font-medium text-gray-700">
       <div className="mx-auto flex h-max items-center justify-start lg:w-3/5">
         <div className="ml-4">|</div>
-        <div className="ml-2 flex items-center justify-center whitespace-nowrap">
+        <div className="flex-x-center ml-2 whitespace-nowrap">
           <p>Category</p>
           <svg
             className="ml-1 h-4 w-4"
@@ -56,7 +56,7 @@ const CategoryBar: NextPage = () => {
             />
           </svg>
         </div>
-        <div className="ml-2 flex items-center justify-center whitespace-nowrap">
+        <div className="flex-x-center ml-2 whitespace-nowrap">
           <p>Subcategory</p>
           <svg
             className="ml-1 h-4 w-4"

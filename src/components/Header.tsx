@@ -1,10 +1,17 @@
 import type { NextPage } from "next";
 import type { NextRouter } from "next/router";
 import Link from "next/link";
-import React, { useMemo } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import useUser from "@/libs/client/useUser";
 import Image from "next/image";
 import DefaultUser from "../../public/default_user.png";
+import { api } from "@/utils/api";
 
 type HeaderProps = {
   title: string;
@@ -19,6 +26,9 @@ type DesktopHeaderElement = {
 
 const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
   const { data } = useUser();
+  const elt = useRef<HTMLDivElement>(null);
+  const avatar = useRef<HTMLDivElement>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const desktopHeader: DesktopHeaderElement[] = useMemo(
     () => [
       {
@@ -36,6 +46,40 @@ const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
     ],
     []
   );
+  const { mutateAsync } = api.users.logout.useMutation();
+
+  const handleDropdown = () => {
+    if (router.pathname !== "/login") {
+      setDropdownOpen(!dropdownOpen);
+    }
+  };
+
+  const handleDropdownClose = useCallback(
+    (e: MouseEvent) => {
+      if (
+        dropdownOpen &&
+        (!avatar.current || !avatar.current.contains(e.target as Node)) &&
+        (!elt.current || !elt.current.contains(e.target as Node))
+      ) {
+        setDropdownOpen(false);
+      }
+    },
+    [dropdownOpen, avatar, elt]
+  );
+
+  useEffect(() => {
+    window.addEventListener("click", handleDropdownClose);
+
+    return () => {
+      window.removeEventListener("click", handleDropdownClose);
+    };
+  }, [handleDropdownClose]);
+
+  const handleLogout = useCallback(async () => {
+    await mutateAsync().then(() => {
+      void router.push("/login");
+    });
+  }, [mutateAsync, router]);
 
   return (
     <>
@@ -84,24 +128,50 @@ const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
             </div>
           </div>
           <div className="relative h-8 w-8 rounded-full">
-            {data?.avatar ? (
-              <Image
-                alt="profile"
-                src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${data.avatar}/avatar`}
-                sizes="80px"
-                fill={true}
-                className="rounded-full"
-              />
-            ) : (
-              <Image
-                alt="no-profile"
-                src={DefaultUser}
-                sizes="80px"
-                fill={true}
-                className="rounded-full"
-                priority={true}
-              />
-            )}
+            <div
+              ref={avatar}
+              className="relative h-full w-full cursor-pointer"
+              onClick={handleDropdown}
+            >
+              {data?.avatar ? (
+                <Image
+                  alt="profile"
+                  src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${data.avatar}/avatar`}
+                  sizes="80px"
+                  fill={true}
+                  className="rounded-full"
+                />
+              ) : (
+                <Image
+                  alt="no-profile"
+                  src={DefaultUser}
+                  sizes="80px"
+                  fill={true}
+                  className="rounded-full"
+                  priority={true}
+                />
+              )}
+            </div>
+            <div ref={elt} className={`${dropdownOpen ? "block" : "hidden"}`}>
+              <div className="absolute origin-top-right rounded-md bg-base-100 shadow-md dark:bg-gray-600">
+                <div
+                  className="flex-x-center cursor-pointer whitespace-nowrap py-2 px-4 font-medium hover:bg-slate-200 dark:text-slate-100 dark:hover:bg-slate-600"
+                  onClick={handleLogout}
+                >
+                  Log out
+                </div>
+                <Link href="/items/upload">
+                  <div className="flex-x-center whitespace-nowrap py-2 px-4 font-medium hover:bg-slate-200 dark:text-slate-100 dark:hover:bg-slate-600">
+                    Upload Item
+                  </div>
+                </Link>
+                <Link href="/mypage">
+                  <div className="flex-x-center whitespace-nowrap py-2 px-4 font-medium hover:bg-slate-200 dark:text-slate-100 dark:hover:bg-slate-600">
+                    My Page
+                  </div>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>

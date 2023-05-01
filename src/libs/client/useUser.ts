@@ -3,10 +3,11 @@ import { useRouter } from "next/router";
 import { api } from "@/utils/api";
 
 export default function useUser() {
+  const router = useRouter();
   const { data, error, isError, refetch } = api.users.me.useQuery(undefined, {
     staleTime: 1000 * 60 * 60 * 24, // one day
+    enabled: router.pathname !== "/login",
   });
-  const router = useRouter();
 
   useEffect(() => {
     if (isError) {

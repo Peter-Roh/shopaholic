@@ -44,6 +44,9 @@ export const usersRouter = createTRPCRouter({
 
     return payload;
   }),
+  logout: privateProcedure.mutation(({ ctx }) => {
+    ctx.session.destroy();
+  }),
   confirm: publicProcedure
     .input(confirmInput)
     .mutation(async ({ ctx, input }) => {
