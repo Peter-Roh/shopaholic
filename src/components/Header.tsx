@@ -153,7 +153,7 @@ const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
               )}
             </div>
             <div ref={elt} className={`${dropdownOpen ? "block" : "hidden"}`}>
-              <div className="absolute origin-top-right rounded-md bg-base-100 shadow-md dark:bg-gray-600">
+              <div className="absolute rounded-md bg-base-100 shadow-md dark:bg-gray-600">
                 <div
                   className="flex-x-center cursor-pointer whitespace-nowrap py-2 px-4 font-medium hover:bg-slate-200 dark:text-slate-100 dark:hover:bg-slate-600"
                   onClick={handleLogout}
