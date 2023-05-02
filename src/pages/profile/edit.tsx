@@ -9,21 +9,10 @@ import { toast } from "react-hot-toast";
 import Modal from "@/components/Modal";
 import Image from "next/image";
 import DefaultUser from "../../../public/default_user.png";
+import type { cloudflareUpload } from "@/types/cloudflare";
 
 type FormValues = RouterInputs["users"]["edit"];
 type FormDelete = RouterInputs["users"]["delete"];
-type cloudflareUpload = {
-  errors: string[];
-  messages: string[];
-  result: {
-    filename: string;
-    id: string;
-    requireSignedURLs: boolean;
-    uploaded: string;
-    variants: string[];
-  };
-  success: boolean;
-};
 
 const ProfileEdit: NextPage = () => {
   const router = useRouter();

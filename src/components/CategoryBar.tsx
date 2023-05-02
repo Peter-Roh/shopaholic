@@ -55,7 +55,7 @@ const CategoryBar: NextPage = () => {
     <>
       <div
         ref={div1}
-        className="no-scrollbar overflow-x-scroll border-b bg-white py-3 text-lg font-medium dark:bg-slate-800"
+        className="no-scrollbar cursor-pointer overflow-x-scroll border-b bg-white py-3 text-lg font-medium dark:bg-slate-800"
         onClick={() => setDropdownOpen(!dropdownOpen)}
       >
         <div className="mx-auto flex h-max items-center justify-start dark:text-slate-200 lg:w-3/5">

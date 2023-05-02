@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Layout from "@/components/Layout";
 import { type RouterInputs, api } from "@/utils/api";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Category, Subcategory } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { itemsInput } from "@/server/api/schema";
@@ -9,14 +9,20 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import useUser from "@/libs/client/useUser";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import Modal from "@/components/Modal";
+import type { cloudflareUpload } from "@/types/cloudflare";
 
 type FormValues = RouterInputs["items"]["add"];
 
 const Upload: NextPage = () => {
   const { data } = useUser();
   const router = useRouter();
+  const [loadingModalOpen, setLoadingModalOpen] = useState(false);
   const [category, setCategory] = useState<Category>();
   const [subcategory, setSubcategory] = useState<Subcategory>();
+  const [selectedFile, setSelectedFile] = useState<File>();
+  const [imagePreview, setImagePreview] = useState("");
 
   const { data: data1 } = api.categories.getCategory.useQuery();
   const { data: data2 } = api.categories.getSubcategory.useQuery(
@@ -29,11 +35,29 @@ const Upload: NextPage = () => {
     }
   );
 
-  const { mutateAsync, isSuccess } = api.items.add.useMutation();
+  const handleFileInputChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const reader = new FileReader();
+      const fileList = event.target.files;
 
+      if (fileList && fileList[0]) {
+        setSelectedFile(fileList[0]);
+        reader.readAsDataURL(fileList[0]);
+        reader.onload = () => {
+          setImagePreview(reader.result as string);
+        };
+      }
+    },
+    []
+  );
+
+  const { mutateAsync, isSuccess } = api.items.add.useMutation();
   const { register, handleSubmit, setValue } = useForm<FormValues>({
     resolver: zodResolver(itemsInput),
   });
+
+  const { mutateAsync: cloudflareMutateAsync } =
+    api.cloudflare.file.useMutation();
 
   const onValid: SubmitHandler<FormValues> = async ({
     name,
@@ -60,7 +84,10 @@ const Upload: NextPage = () => {
   };
 
   const onError = (errors: object) => {
-    if (Object.keys(errors).includes("name")) {
+    setLoadingModalOpen(false);
+    if (Object.keys(errors).includes("image")) {
+      toast.error("Please put an image for the item.");
+    } else if (Object.keys(errors).includes("name")) {
       toast.error("Please put a name for the item.");
     } else if (Object.keys(errors).includes("categoryId")) {
       toast.error("Please select category for the item.");
@@ -71,6 +98,34 @@ const Upload: NextPage = () => {
     } else if (Object.keys(errors).includes("description")) {
       toast.error("Please put a description for the item.");
     }
+  };
+
+  const handleSubmitForm = async (e: React.BaseSyntheticEvent) => {
+    e.preventDefault();
+    if (selectedFile) {
+      setLoadingModalOpen(true);
+      // get a one-time upload URL from Cloudflare Direct Creator Upload
+      await cloudflareMutateAsync().then(async (res) => {
+        const { uploadURL } = res.result;
+        const form = new FormData();
+        form.append("file", selectedFile, data?.id.toString());
+        // upload file
+        await fetch(uploadURL, {
+          method: "POST",
+          body: form,
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((result: cloudflareUpload) => {
+            const {
+              result: { id },
+            } = result;
+            setValue("image", id);
+          });
+      });
+    }
+    return handleSubmit(onValid, onError)(e);
   };
 
   useEffect(() => {
@@ -95,32 +150,45 @@ const Upload: NextPage = () => {
     if (data) {
       setValue("userId", data.id);
     }
-
-    setValue("image", ""); // TODO
   }, [setValue, data]);
 
   return (
     <Layout title="Upload" canGoBack>
       <div className="lg:mx-auto lg:w-3/5">
-        <form onSubmit={handleSubmit(onValid, onError)}>
+        <form onSubmit={handleSubmitForm}>
           <div className="flex-x-center mb-6 w-full">
-            <label className="flex-x-center aspect-[4/3] w-full cursor-pointer rounded-md border-2 border-dashed border-gray-300 text-gray-600 hover:border-cyan-500 hover:text-cyan-500">
-              <svg
-                className="h-12 w-12"
-                stroke="currentColor"
-                fill="none"
-                viewBox="0 0 48 48"
-                aria-hidden="true"
-              >
-                <path
-                  d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+            {imagePreview ? (
+              <div className="flex-x-center relative aspect-[4/3] w-full">
+                <Image
+                  alt="preview"
+                  src={imagePreview}
+                  fill={true}
+                  className="object-contain"
                 />
-              </svg>
-              <input className="hidden" type="file" />
-            </label>
+              </div>
+            ) : (
+              <label className="flex-x-center aspect-[4/3] w-full cursor-pointer rounded-md border-2 border-dashed border-gray-300 text-gray-600 hover:border-cyan-500 hover:text-cyan-500">
+                <svg
+                  className="h-12 w-12"
+                  stroke="currentColor"
+                  fill="none"
+                  viewBox="0 0 48 48"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <input
+                  onChange={handleFileInputChange}
+                  className="hidden"
+                  type="file"
+                />
+              </label>
+            )}
           </div>
           {
             // * name
@@ -290,6 +358,7 @@ const Upload: NextPage = () => {
           </button>
         </form>
       </div>
+      <Modal modalType="Loading" isOpen={loadingModalOpen} />
     </Layout>
   );
 };
