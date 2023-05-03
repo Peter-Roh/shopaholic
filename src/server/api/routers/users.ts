@@ -1,5 +1,11 @@
 import { TRPCError } from "@trpc/server";
-import { confirmInput, deleteInput, editInput, enterInput } from "./../schema";
+import {
+  confirmInput,
+  deleteInput,
+  editInput,
+  enterInput,
+  getUserByIdInput,
+} from "./../schema";
 import {
   createTRPCRouter,
   publicProcedure,
@@ -20,6 +26,21 @@ export const usersRouter = createTRPCRouter({
 
     return profile;
   }),
+  getById: privateProcedure
+    .input(getUserByIdInput)
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.prisma.user.findUnique({
+        where: {
+          id: input.userId,
+        },
+      });
+
+      if (!user) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User Not Found" });
+      }
+
+      return user;
+    }),
   login: publicProcedure.input(enterInput).mutation(async ({ ctx, input }) => {
     const { email } = input;
     const name = email.split("@")[0] || "Anonymous"; // email 주소 앞부분을 이름으로
@@ -88,7 +109,7 @@ export const usersRouter = createTRPCRouter({
     if (!user) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: "The user is not found.",
+        message: "User Not Found.",
       });
     }
 

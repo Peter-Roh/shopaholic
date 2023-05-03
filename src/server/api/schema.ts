@@ -48,3 +48,11 @@ export const getManyInput = z.object({
   categoryId: z.number().int().optional(),
   subcategoryId: z.number().int().optional(),
 });
+
+export const getItemByIdInput = z.object({
+  itemId: z.number().int().nonnegative(),
+});
+
+export const getUserByIdInput = z.object({
+  userId: z.number().int().nonnegative(),
+});

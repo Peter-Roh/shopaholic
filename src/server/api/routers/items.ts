@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { getManyInput, itemsInput } from "../schema";
+import { getItemByIdInput, getManyInput, itemsInput } from "../schema";
 import { createTRPCRouter, privateProcedure } from "../trpc";
 import { ratelimit } from "@/server/ratelimiter";
 
@@ -66,5 +66,23 @@ export const itemsRouter = createTRPCRouter({
           : await ctx.prisma.item.findMany();
 
       return items;
+    }),
+  getById: privateProcedure
+    .input(getItemByIdInput)
+    .query(async ({ ctx, input }) => {
+      const item = await ctx.prisma.item.findUnique({
+        where: {
+          id: input.itemId,
+        },
+      });
+
+      if (!item) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Item Not Found.",
+        });
+      }
+
+      return item;
     }),
 });

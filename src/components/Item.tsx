@@ -3,23 +3,26 @@ import Image from "next/image";
 import Link from "next/link";
 
 type ItemProps = {
+  id: number;
   name: string;
   description: string;
   price: number;
   image: string;
 };
 
-const Item: NextPage<ItemProps> = ({ name, description, price, image }) => {
+const Item: NextPage<ItemProps> = ({ id, name, description, price, image }) => {
   return (
-    <Link href="/items/1">
+    <Link href={`/items/${id}`}>
       <div className="flex cursor-pointer items-center justify-between space-x-4 pt-2">
         <div className="flex">
           <div className="relative h-20 w-20">
             <Image
               alt="item"
               src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${image}/public`}
+              sizes="80px"
               fill={true}
               className="rounded-md object-contain"
+              priority={true}
             />
           </div>
           <div className="ml-4 flex flex-col items-start justify-start">

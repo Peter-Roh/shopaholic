@@ -156,7 +156,7 @@ const CategoryBar: NextPage = () => {
                   className={`cursor-pointer px-2 py-1 dark:text-slate-200 ${
                     category && category.name === elt1.name
                       ? "bg-cyan-500 font-semibold text-white"
-                      : "hover:bg-slate-200"
+                      : "hover:bg-slate-200 dark:hover:bg-slate-500"
                   }`}
                   onClick={() => handleCategory(elt1)}
                 >

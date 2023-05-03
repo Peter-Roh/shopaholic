@@ -21,17 +21,26 @@ const Home: NextPage = () => {
           // TODO carousel
         }
         <div className="mt-4 flex flex-col space-y-2 divide-y">
-          {data?.map((item) => {
-            return (
-              <Item
-                key={item.id}
-                name={item.name}
-                description={item.description}
-                price={item.price}
-                image={item.image}
-              />
-            );
-          })}
+          {data && data.length === 0 ? (
+            <>
+              <div className="flex-y-center mt-2 text-gray-600">
+                Item not found.
+              </div>
+            </>
+          ) : (
+            data?.map((item) => {
+              return (
+                <Item
+                  key={item.id}
+                  id={item.id}
+                  name={item.name}
+                  description={item.description}
+                  price={item.price}
+                  image={item.image}
+                />
+              );
+            })
+          )}
         </div>
       </div>
       <Link href="/items/upload">

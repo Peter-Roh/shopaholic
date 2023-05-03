@@ -1,22 +1,57 @@
 import type { NextPage } from "next";
 import Layout from "@/components/Layout";
+import { useRouter } from "next/router";
+import { api } from "@/utils/api";
+import Image from "next/image";
+import DefaultUser from "../../../public/default_user.png";
 
 const ItemsDetail: NextPage = () => {
+  const router = useRouter();
+  const { id } = router.query;
+
+  const { data } = api.items.getById.useQuery(
+    {
+      itemId: parseInt(id as string),
+    },
+    {
+      enabled: id !== undefined,
+      onError: () => void router.push("/"),
+    }
+  );
+
+  const { data: user } = api.users.getById.useQuery(
+    { userId: data ? data.userId : -1 },
+    {
+      enabled: data !== undefined,
+      onError: () => void router.push("/"),
+    }
+  );
+
   return (
     <Layout title="item" hasTabBar canGoBack>
       <div className="lg:mx-auto lg:w-3/5">
         <div>
-          <div className="aspect-[4/3] w-full bg-slate-300" />
+          <div className="relative aspect-[4/3] w-full">
+            {data ? (
+              <Image
+                alt="item"
+                src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${data.image}/public`}
+                sizes="100vw"
+                fill={true}
+                className="object-contain"
+                priority={true}
+              />
+            ) : null}
+          </div>
           <div className="flex flex-col">
-            <span className="mt-3 text-3xl font-bold text-gray-900">
-              Galaxy S22
+            <span className="mt-3 text-3xl font-bold text-gray-900 dark:text-slate-100">
+              {data?.name}
             </span>
-            <span className="mt-3 text-3xl text-gray-900">$40</span>
-            <p className="my-6 text-base text-gray-700">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa
-              nesciunt, sint dolorem molestiae accusamus iusto laboriosam ipsum
-              vitae quas minus corporis id tenetur dolore iste quae tempore
-              dolor natus rem?
+            <span className="mt-3 text-3xl text-gray-900 dark:text-slate-100">
+              ${data ? (data.price / 100).toFixed(2) : null}
+            </span>
+            <p className="my-6 text-base text-gray-700 dark:text-slate-200">
+              {data?.description}
             </p>
           </div>
         </div>
@@ -80,16 +115,41 @@ const ItemsDetail: NextPage = () => {
           </div>
         </div>
         <div className="flex cursor-pointer items-center space-x-3 border-b py-3">
-          <div className="h-12 w-12 rounded-full bg-slate-300" />
+          <div className="relative h-12 w-12 rounded-full">
+            {user ? (
+              user.avatar ? (
+                <Image
+                  alt="avatar"
+                  src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${user.avatar}/avatar`}
+                  sizes="48px"
+                  fill={true}
+                  className="rounded-full"
+                />
+              ) : (
+                <Image
+                  alt="no-profile"
+                  src={DefaultUser}
+                  sizes="48px"
+                  fill={true}
+                  className="rounded-full"
+                  priority={true}
+                />
+              )
+            ) : null}
+          </div>
           <div>
-            <p className="text-sm font-medium text-gray-700">Steve</p>
-            <p className="text-xs font-medium text-gray-500">
+            <p className="text-sm font-medium text-gray-700 dark:text-slate-200">
+              {user?.name}
+            </p>
+            <p className="text-xs font-medium text-gray-500 dark:text-slate-400">
               View profile &rarr;
             </p>
           </div>
         </div>
         <div>
-          <p className="mt-4 text-2xl font-bold text-gray-900">Similar items</p>
+          <p className="mt-4 text-2xl font-bold text-gray-900 dark:text-slate-100">
+            Similar items
+          </p>
           <div className="mt-4 grid grid-cols-2 gap-4">
             {[1, 1, 1, 1].map((_, i) => (
               <div key={i}>
