@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { itemsInput } from "../schema";
+import { getManyInput, itemsInput } from "../schema";
 import { createTRPCRouter, privateProcedure } from "../trpc";
 import { ratelimit } from "@/server/ratelimiter";
 
@@ -50,4 +50,21 @@ export const itemsRouter = createTRPCRouter({
 
     return item;
   }),
+  getMany: privateProcedure
+    .input(getManyInput)
+    .query(async ({ ctx, input }) => {
+      const { categoryId, subcategoryId } = input;
+
+      const items =
+        categoryId !== -1 || subcategoryId !== -1
+          ? await ctx.prisma.item.findMany({
+              where: {
+                categoryId: categoryId !== -1 ? categoryId : undefined,
+                subcategoryId: subcategoryId !== -1 ? subcategoryId : undefined,
+              },
+            })
+          : await ctx.prisma.item.findMany();
+
+      return items;
+    }),
 });

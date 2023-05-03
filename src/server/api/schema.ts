@@ -43,3 +43,8 @@ export const cloudflareFileOutput = z.object({
     uploadURL: z.string(),
   }),
 });
+
+export const getManyInput = z.object({
+  categoryId: z.number().int().optional(),
+  subcategoryId: z.number().int().optional(),
+});

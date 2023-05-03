@@ -2,6 +2,12 @@ import type { NextPage } from "next";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "@/utils/api";
 import type { Category, Subcategory } from "@prisma/client";
+import { useDispatch } from "react-redux";
+import {
+  reset,
+  saveCategoryId,
+  saveSubcategoryId,
+} from "@/redux/categorySlice";
 
 const CategoryBar: NextPage = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -9,6 +15,7 @@ const CategoryBar: NextPage = () => {
   const [subcategory, setSubcategory] = useState<Subcategory>();
   const div1 = useRef<HTMLDivElement>(null);
   const div2 = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
 
   const { data: data1 } = api.categories.getCategory.useQuery();
   const { data: data2 } = api.categories.getSubcategory.useQuery(
@@ -41,15 +48,29 @@ const CategoryBar: NextPage = () => {
     };
   }, [handleDropdownClose]);
 
-  const handleCategory = useCallback((elt: Category) => {
-    setCategory(elt);
-    setSubcategory(undefined);
-  }, []);
+  useEffect(() => {
+    return () => {
+      dispatch(reset());
+    };
+  }, [dispatch]);
 
-  const handleSubcategory = useCallback((elt: Subcategory) => {
-    setSubcategory(elt);
-    setDropdownOpen(false);
-  }, []);
+  const handleCategory = useCallback(
+    (elt: Category) => {
+      setCategory(elt);
+      dispatch(saveCategoryId(elt.id));
+      setSubcategory(undefined);
+    },
+    [dispatch]
+  );
+
+  const handleSubcategory = useCallback(
+    (elt: Subcategory) => {
+      setSubcategory(elt);
+      dispatch(saveSubcategoryId(elt.id));
+      setDropdownOpen(false);
+    },
+    [dispatch]
+  );
 
   return (
     <>

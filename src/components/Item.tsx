@@ -1,16 +1,37 @@
 import type { NextPage } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
-const Item: NextPage = () => {
+type ItemProps = {
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+};
+
+const Item: NextPage<ItemProps> = ({ name, description, price, image }) => {
   return (
     <Link href="/items/1">
       <div className="flex cursor-pointer items-center justify-between space-x-4 pt-2">
         <div className="flex">
-          <div className="h-20 w-20 rounded-md bg-gray-400 " />
+          <div className="relative h-20 w-20">
+            <Image
+              alt="item"
+              src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${image}/public`}
+              fill={true}
+              className="rounded-md object-contain"
+            />
+          </div>
           <div className="ml-4 flex flex-col items-start justify-start">
-            <span className="text-lg font-bold text-gray-900">iPhone</span>
-            <span className="text-xs font-medium text-gray-500">Black</span>
-            <span className="mt-1 font-medium text-gray-900">$95</span>
+            <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
+              {name}
+            </span>
+            <span className="text-xs font-medium text-gray-500 dark:text-slate-400">
+              {description}
+            </span>
+            <span className="mt-1 font-medium text-gray-900 dark:text-slate-100">
+              ${(price / 100).toFixed(2)}
+            </span>
           </div>
         </div>
         <div className="mt-auto flex items-end justify-end space-x-1.5">

@@ -4,6 +4,8 @@ import { api } from "@/utils/api";
 import "@/styles/globals.css";
 import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
+import { Provider } from "react-redux";
+import store from "@/store";
 
 const MyApp: AppType = ({ Component, pageProps }: AppProps) => {
   const systemPreference: boolean = useMediaQuery({
@@ -22,8 +24,10 @@ const MyApp: AppType = ({ Component, pageProps }: AppProps) => {
 
   return (
     <>
-      <Toaster position="bottom-center" />
-      <Component {...pageProps} />
+      <Provider store={store}>
+        <Toaster position="bottom-center" />
+        <Component {...pageProps} />
+      </Provider>
     </>
   );
 };

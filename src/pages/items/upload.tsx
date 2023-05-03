@@ -108,7 +108,11 @@ const Upload: NextPage = () => {
       await cloudflareMutateAsync().then(async (res) => {
         const { uploadURL } = res.result;
         const form = new FormData();
-        form.append("file", selectedFile, data?.id.toString());
+        form.append(
+          "file",
+          selectedFile,
+          data?.id.toString().concat("_").concat("item")
+        );
         // upload file
         await fetch(uploadURL, {
           method: "POST",
@@ -353,7 +357,7 @@ const Upload: NextPage = () => {
           {
             // * upload button
           }
-          <button className="ring-focus-2 mb-4 w-full rounded-md border border-transparent bg-cyan-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-cyan-600">
+          <button className="ring-focus-2 mb-8 w-full rounded-md border border-transparent bg-cyan-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-cyan-600">
             Upload Product!
           </button>
         </form>

@@ -2,10 +2,16 @@ import type { NextPage } from "next";
 import Layout from "@/components/Layout";
 import Item from "@/components/Item";
 import Link from "next/link";
-import useUser from "@/libs/client/useUser";
+import { api } from "@/utils/api";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
 
 const Home: NextPage = () => {
-  const { data } = useUser();
+  const value = useSelector((state: RootState) => state.category);
+  const { data } = api.items.getMany.useQuery({
+    categoryId: value.categoryId,
+    subcategoryId: value.subcategoryId,
+  });
 
   return (
     <Layout title="Home" hasTabBar canGoBack>
@@ -15,9 +21,17 @@ const Home: NextPage = () => {
           // TODO carousel
         }
         <div className="mt-4 flex flex-col space-y-2 divide-y">
-          {[1, 1, 1, 1, 1].map((_, i) => (
-            <Item key={i} />
-          ))}
+          {data?.map((item) => {
+            return (
+              <Item
+                key={item.id}
+                name={item.name}
+                description={item.description}
+                price={item.price}
+                image={item.image}
+              />
+            );
+          })}
         </div>
       </div>
       <Link href="/items/upload">
