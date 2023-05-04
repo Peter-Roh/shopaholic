@@ -4,28 +4,63 @@ import { useRouter } from "next/router";
 import { api } from "@/utils/api";
 import Image from "next/image";
 import DefaultUser from "../../../public/default_user.png";
+import useUser from "@/libs/client/useUser";
+import type { ParsedUrlQuery } from "querystring";
+import { useCallback } from "react";
+import Link from "next/link";
+import { getPrice } from "@/utils/common";
+
+interface ParsedUrlQueryForPage extends ParsedUrlQuery {
+  id: string;
+}
 
 const ItemsDetail: NextPage = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { data: user } = useUser();
+  const { id } = router.query as ParsedUrlQueryForPage;
 
   const { data } = api.items.getById.useQuery(
     {
-      itemId: parseInt(id as string),
+      itemId: parseInt(id),
     },
     {
       enabled: id !== undefined,
       onError: () => void router.push("/"),
     }
   );
+  const utils = api.useContext();
 
-  const { data: user } = api.users.getById.useQuery(
-    { userId: data ? data.userId : -1 },
-    {
-      enabled: data !== undefined,
-      onError: () => void router.push("/"),
+  // optimistic update
+  const { mutate, isLoading } = api.favorite.toggleLike.useMutation({
+    onMutate: async () => {
+      await utils.items.getById.cancel({ itemId: parseInt(id) });
+      const prevData = utils.items.getById.getData({ itemId: parseInt(id) });
+      utils.items.getById.setData({ itemId: parseInt(id) }, (old) => {
+        if (old === undefined) {
+          return;
+        }
+        return {
+          ...old,
+          isLiked: !old.isLiked,
+        };
+      });
+      return {
+        prevData,
+      };
+    },
+    onError: (err, newData, ctx) => {
+      utils.items.getById.setData({ itemId: parseInt(id) }, ctx?.prevData);
+    },
+    onSettled: () => {
+      void utils.items.getById.invalidate({ itemId: parseInt(id) });
+    },
+  });
+
+  const onLikeClick = useCallback(() => {
+    if (!isLoading) {
+      mutate({ userId: user.id, itemId: parseInt(id) });
     }
-  );
+  }, [id, mutate, user?.id, isLoading]);
 
   return (
     <Layout title="item" hasTabBar canGoBack>
@@ -38,8 +73,8 @@ const ItemsDetail: NextPage = () => {
                 src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${data.image}/public`}
                 sizes="100vw"
                 fill={true}
-                className="object-contain"
                 priority={true}
+                className="object-contain"
               />
             ) : null}
           </div>
@@ -48,7 +83,7 @@ const ItemsDetail: NextPage = () => {
               {data?.name}
             </span>
             <span className="mt-3 text-3xl text-gray-900 dark:text-slate-100">
-              ${data ? (data.price / 100).toFixed(2) : null}
+              ${data ? getPrice(data.price) : null}
             </span>
             <p className="my-6 text-base text-gray-700 dark:text-slate-200">
               {data?.description}
@@ -75,26 +110,43 @@ const ItemsDetail: NextPage = () => {
               </svg>
               Talk to seller
             </button>
-            <button className="flex-x-center ring-focus-2 rounded-md border p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500">
-              <svg
-                className="icon"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-                />
-              </svg>
+            <button
+              onClick={onLikeClick}
+              className={`flex-x-center ring-focus-2 rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 ${
+                data?.isLiked ? "" : "border hover:text-red-700"
+              }`}
+            >
+              {data?.isLiked ? (
+                <svg
+                  className="icon text-red-700"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                </svg>
+              ) : (
+                <svg
+                  className="icon"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                  />
+                </svg>
+              )}
             </button>
           </div>
           <div className="mt-1 w-full">
-            <button className="ring-focus-2 flex-x-center w-full rounded-md bg-lime-500 py-2 font-medium text-white hover:bg-cyan-600">
+            <button className="ring-focus-2 flex-x-center w-full rounded-md bg-lime-500 py-2 font-medium text-white hover:bg-lime-600">
               <svg
                 className="icon mr-2"
                 fill="none"
@@ -116,30 +168,27 @@ const ItemsDetail: NextPage = () => {
         </div>
         <div className="flex cursor-pointer items-center space-x-3 border-b py-3">
           <div className="relative h-12 w-12 rounded-full">
-            {user ? (
-              user.avatar ? (
-                <Image
-                  alt="avatar"
-                  src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${user.avatar}/avatar`}
-                  sizes="48px"
-                  fill={true}
-                  className="rounded-full"
-                />
-              ) : (
-                <Image
-                  alt="no-profile"
-                  src={DefaultUser}
-                  sizes="48px"
-                  fill={true}
-                  className="rounded-full"
-                  priority={true}
-                />
-              )
-            ) : null}
+            {data?.user.avatar ? (
+              <Image
+                alt="avatar"
+                src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${data.user.avatar}/avatar`}
+                sizes="48px"
+                fill={true}
+                className="rounded-full"
+              />
+            ) : (
+              <Image
+                alt="no-profile"
+                src={DefaultUser}
+                sizes="48px"
+                fill={true}
+                className="rounded-full"
+              />
+            )}
           </div>
           <div>
             <p className="text-sm font-medium text-gray-700 dark:text-slate-200">
-              {user?.name}
+              {data?.user?.name}
             </p>
             <p className="text-xs font-medium text-gray-500 dark:text-slate-400">
               View profile &rarr;
@@ -147,17 +196,34 @@ const ItemsDetail: NextPage = () => {
           </div>
         </div>
         <div>
-          <p className="mt-4 text-2xl font-bold text-gray-900 dark:text-slate-100">
-            Similar items
-          </p>
-          <div className="mt-4 grid grid-cols-2 gap-4">
-            {[1, 1, 1, 1].map((_, i) => (
-              <div key={i}>
-                <div className="mb-2 aspect-[4/3] w-full bg-slate-300" />
-                <p className="text-gray-900 ">iPhone 12</p>
-                <p className="text-sm font-medium text-gray-900">$6</p>
-              </div>
-            ))}
+          {data?.related && data.related.length > 0 ? (
+            <p className="mt-4 text-2xl font-bold text-gray-900 dark:text-slate-100">
+              Similar items
+            </p>
+          ) : null}
+          <div className="mt-4 mb-8 grid grid-cols-2 gap-4">
+            {data?.related.map((relatedItem) => {
+              return (
+                <Link key={relatedItem.id} href={`/items/${relatedItem.id}`}>
+                  <div>
+                    <div className="relative mb-2 aspect-[4/3] w-full">
+                      <Image
+                        alt="item"
+                        src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${relatedItem.image}/public`}
+                        fill={true}
+                        className=""
+                      />
+                    </div>
+                    <p className="text-lg text-gray-900 dark:text-slate-100">
+                      {relatedItem.name}
+                    </p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-slate-200">
+                      ${getPrice(relatedItem.price)}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>

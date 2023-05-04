@@ -62,8 +62,23 @@ export const itemsRouter = createTRPCRouter({
                 categoryId: categoryId !== -1 ? categoryId : undefined,
                 subcategoryId: subcategoryId !== -1 ? subcategoryId : undefined,
               },
+              include: {
+                _count: {
+                  select: {
+                    favs: true,
+                  },
+                },
+              },
             })
-          : await ctx.prisma.item.findMany();
+          : await ctx.prisma.item.findMany({
+              include: {
+                _count: {
+                  select: {
+                    favs: true,
+                  },
+                },
+              },
+            });
 
       return items;
     }),
@@ -74,6 +89,15 @@ export const itemsRouter = createTRPCRouter({
         where: {
           id: input.itemId,
         },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              avatar: true,
+            },
+          },
+        },
       });
 
       if (!item) {
@@ -83,6 +107,40 @@ export const itemsRouter = createTRPCRouter({
         });
       }
 
-      return item;
+      const fav = await ctx.prisma.fav.findFirst({
+        where: {
+          userId: ctx.userId,
+          itemId: input.itemId,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      const isLiked = fav ? true : false;
+
+      const terms = item.name.split(" ").map((word) => ({
+        name: {
+          contains: word,
+        },
+      }));
+
+      const related = await ctx.prisma.item.findMany({
+        where: {
+          OR: terms,
+          AND: {
+            id: {
+              not: item.id,
+            },
+          },
+        },
+        take: 4,
+      });
+
+      return {
+        ...item,
+        isLiked,
+        related,
+      };
     }),
 });

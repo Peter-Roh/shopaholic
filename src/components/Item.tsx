@@ -1,3 +1,4 @@
+import { getPrice } from "@/utils/common";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,9 +9,17 @@ type ItemProps = {
   description: string;
   price: number;
   image: string;
+  likes: number;
 };
 
-const Item: NextPage<ItemProps> = ({ id, name, description, price, image }) => {
+const Item: NextPage<ItemProps> = ({
+  id,
+  name,
+  description,
+  price,
+  image,
+  likes,
+}) => {
   return (
     <Link href={`/items/${id}`}>
       <div className="flex cursor-pointer items-center justify-between space-x-4 pt-2">
@@ -33,14 +42,14 @@ const Item: NextPage<ItemProps> = ({ id, name, description, price, image }) => {
               {description}
             </span>
             <span className="mt-1 font-medium text-gray-900 dark:text-slate-100">
-              ${(price / 100).toFixed(2)}
+              ${getPrice(price)}
             </span>
           </div>
         </div>
         <div className="mt-auto flex items-end justify-end space-x-1.5">
           <div className="flex-x-center space-x-0.5 text-sm text-gray-600">
             <svg
-              className="h-4 w-4"
+              className="h-4 w-4 text-red-700"
               fill="none"
               stroke="currentColor"
               strokeWidth={1.5}
@@ -54,7 +63,7 @@ const Item: NextPage<ItemProps> = ({ id, name, description, price, image }) => {
                 d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
               />
             </svg>
-            <span>1</span>
+            <span className="dark:text-slate-200">{likes}</span>
           </div>
           <div className="flex-x-center space-x-0.5 text-sm text-gray-600">
             <svg

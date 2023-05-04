@@ -29,7 +29,7 @@ type ModalProps = ModalConfirm | ModalCancel | ModalLoading;
 const Modal: NextPage<ModalProps> = (props) => {
   return (
     <div
-      className={`absolute top-0 left-0 h-full w-screen bg-gray-500 bg-opacity-50 dark:bg-opacity-70 ${
+      className={`absolute top-0 left-0 z-50 h-full w-screen bg-gray-500 bg-opacity-50 dark:bg-opacity-70 ${
         props.isOpen ? "flex-x-center" : "hidden"
       }`}
     >

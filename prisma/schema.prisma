@@ -18,6 +18,7 @@ model User {
   avatar    String?
   items     Item[]
   tokens    Token[]
+  favs      Fav[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -62,10 +63,24 @@ model Item {
   categoryId    Int
   subcategory   Subcategory @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
   subcategoryId Int
+  favs          Fav[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
   @@index([userId])
   @@index([categoryId])
   @@index([subcategoryId])
+}
+
+model Fav {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([itemId])
 }

@@ -37,6 +37,7 @@ const Home: NextPage = () => {
                   description={item.description}
                   price={item.price}
                   image={item.image}
+                  likes={item._count.favs}
                 />
               );
             })

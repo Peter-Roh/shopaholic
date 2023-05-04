@@ -56,3 +56,8 @@ export const getItemByIdInput = z.object({
 export const getUserByIdInput = z.object({
   userId: z.number().int().nonnegative(),
 });
+
+export const toggleLikeInput = z.object({
+  userId: z.number().int().nonnegative(),
+  itemId: z.number().int().nonnegative(),
+});
