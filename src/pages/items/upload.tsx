@@ -166,8 +166,8 @@ const Upload: NextPage = () => {
                 <Image
                   alt="preview"
                   src={imagePreview}
-                  fill={true}
                   className="object-contain"
+                  fill
                 />
               </div>
             ) : (

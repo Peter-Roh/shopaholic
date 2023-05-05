@@ -185,27 +185,27 @@ const ProfileEdit: NextPage = () => {
                   {avatarPreview ? (
                     <Image
                       alt="avatar"
+                      className="rounded-full object-cover"
                       src={avatarPreview}
                       sizes="80px"
-                      fill={true}
-                      className="rounded-full object-cover"
+                      fill
                     />
                   ) : data?.avatar ? (
                     <Image
                       alt="profile"
+                      className="rounded-full"
                       src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${data.avatar}/avatar`}
                       sizes="80px"
-                      fill={true}
-                      className="rounded-full"
+                      fill
                     />
                   ) : (
                     <Image
                       alt="no-profile"
+                      className="rounded-full"
                       src={DefaultUser}
                       placeholder="blur"
                       sizes="80px"
-                      fill={true}
-                      className="rounded-full"
+                      fill
                     />
                   )}
                 </div>

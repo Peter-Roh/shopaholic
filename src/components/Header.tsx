@@ -136,19 +136,19 @@ const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
               {data?.avatar ? (
                 <Image
                   alt="profile"
+                  className="rounded-full"
                   src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${data.avatar}/avatar`}
                   sizes="80px"
-                  fill={true}
-                  className="rounded-full"
+                  fill
                 />
               ) : (
                 <Image
                   alt="no-profile"
-                  src={DefaultUser}
-                  sizes="80px"
-                  fill={true}
                   className="rounded-full"
-                  priority={true}
+                  src={DefaultUser}
+                  placeholder="blur"
+                  sizes="80px"
+                  fill
                 />
               )}
             </div>

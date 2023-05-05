@@ -70,11 +70,11 @@ const ItemsDetail: NextPage = () => {
             {data ? (
               <Image
                 alt="item"
+                className="h-auto w-full object-contain"
                 src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${data.image}/public`}
                 sizes="100vw"
-                fill={true}
                 priority={true}
-                className="object-contain"
+                fill
               />
             ) : null}
           </div>
@@ -180,6 +180,7 @@ const ItemsDetail: NextPage = () => {
               <Image
                 alt="no-profile"
                 src={DefaultUser}
+                placeholder="blur"
                 sizes="48px"
                 fill={true}
                 className="rounded-full"
@@ -210,8 +211,8 @@ const ItemsDetail: NextPage = () => {
                       <Image
                         alt="item"
                         src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${relatedItem.image}/public`}
-                        fill={true}
-                        className=""
+                        sizes="50vw"
+                        fill
                       />
                     </div>
                     <p className="text-lg text-gray-900 dark:text-slate-100">

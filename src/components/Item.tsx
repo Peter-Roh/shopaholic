@@ -27,11 +27,11 @@ const Item: NextPage<ItemProps> = ({
           <div className="relative h-20 w-20">
             <Image
               alt="item"
+              className="rounded-md object-contain"
               src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${image}/public`}
               sizes="80px"
-              fill={true}
-              className="rounded-md object-contain"
               priority={true}
+              fill
             />
           </div>
           <div className="ml-4 flex flex-col items-start justify-start">
