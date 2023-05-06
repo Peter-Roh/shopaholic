@@ -11,6 +11,7 @@ import React, {
 import useUser from "@/libs/client/useUser";
 import Image from "next/image";
 import DefaultUser from "../../public/default_user.png";
+import Logo from "../../public/shopaholic.png";
 import { api } from "@/utils/api";
 
 type HeaderProps = {
@@ -47,6 +48,7 @@ const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
     []
   );
   const { mutateAsync } = api.users.logout.useMutation();
+  const utils = api.useContext();
 
   const handleDropdown = () => {
     if (router.pathname !== "/login") {
@@ -77,9 +79,14 @@ const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
 
   const handleLogout = useCallback(async () => {
     await mutateAsync().then(() => {
+      utils.users.me.setData(undefined, {
+        ...data,
+        id: -1,
+        avatar: null,
+      });
       void router.push("/login");
     });
-  }, [mutateAsync, router]);
+  }, [mutateAsync, router, data, utils.users.me]);
 
   return (
     <>
@@ -112,7 +119,17 @@ const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
         <div className="mx-auto flex h-max w-3/5 items-center justify-between">
           <div className="flex items-center pl-3 dark:text-white">
             <div>
-              <Link href="/">Shopaholic</Link>
+              <Link href="/">
+                <div className="relative h-8 w-8">
+                  <Image
+                    alt="logo"
+                    src={Logo}
+                    placeholder="blur"
+                    sizes="64px"
+                    fill
+                  />
+                </div>
+              </Link>
             </div>
             <div className="ml-16 flex items-center space-x-8">
               {desktopHeader.map((elt: DesktopHeaderElement) => {

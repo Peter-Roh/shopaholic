@@ -6,7 +6,7 @@ import Image from "next/image";
 import DefaultUser from "../../../public/default_user.png";
 import useUser from "@/libs/client/useUser";
 import type { ParsedUrlQuery } from "querystring";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import { getPrice } from "@/utils/common";
 
@@ -18,6 +18,7 @@ const ItemsDetail: NextPage = () => {
   const router = useRouter();
   const { data: user } = useUser();
   const { id } = router.query as ParsedUrlQueryForPage;
+  const [qty, setQty] = useState(1);
 
   const { data } = api.items.getById.useQuery(
     {
@@ -62,6 +63,16 @@ const ItemsDetail: NextPage = () => {
     }
   }, [id, mutate, user?.id, isLoading]);
 
+  const onClickPlus = useCallback(() => {
+    setQty((qty) => qty + 1);
+  }, []);
+
+  const onClickMinus = useCallback(() => {
+    if (qty > 1) {
+      setQty((qty) => qty - 1);
+    }
+  }, [qty]);
+
   return (
     <Layout title="item" hasTabBar canGoBack>
       <div className="lg:mx-auto lg:w-3/5">
@@ -82,9 +93,30 @@ const ItemsDetail: NextPage = () => {
             <span className="mt-3 text-3xl font-bold text-gray-900 dark:text-slate-100">
               {data?.name}
             </span>
-            <span className="mt-3 text-3xl text-gray-900 dark:text-slate-100">
-              ${data ? getPrice(data.price) : null}
-            </span>
+            <div className="mt-3 flex items-center justify-between">
+              <span className="text-3xl text-gray-900 dark:text-slate-100">
+                ${data ? getPrice(data.price) : null}
+              </span>
+              <div className="flex-x-center space-x-3 text-xl">
+                <div
+                  className="flex-x-center cursor-pointer rounded-md border py-1 px-3 hover:bg-gray-100 dark:text-slate-100 dark:hover:bg-slate-500"
+                  onClick={onClickMinus}
+                >
+                  <span>-</span>
+                </div>
+                <div>
+                  <span className="dark:text-slate-100">{qty}</span>
+                </div>
+                <div>
+                  <span
+                    className="flex-x-center cursor-pointer rounded-md border py-1 px-3 hover:bg-gray-100 dark:text-slate-100 dark:hover:bg-slate-500"
+                    onClick={onClickPlus}
+                  >
+                    +
+                  </span>
+                </div>
+              </div>
+            </div>
             <p className="my-6 text-base text-gray-700 dark:text-slate-200">
               {data?.description}
             </p>
