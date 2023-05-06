@@ -61,3 +61,13 @@ export const toggleLikeInput = z.object({
   userId: z.number().int().nonnegative(),
   itemId: z.number().int().nonnegative(),
 });
+
+export const cartAddInput = z.object({
+  userId: z.number().int().nonnegative(),
+  itemId: z.number().int().nonnegative(),
+  qty: z.number().int().nonnegative(),
+});
+
+export const cartDeleteInput = z.object({
+  cartItemId: z.number().int().nonnegative(),
+});

@@ -34,7 +34,7 @@ const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
     () => [
       {
         name: "Cart",
-        pathname: "/",
+        pathname: "/cart",
       },
       {
         name: "Chat",

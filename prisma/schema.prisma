@@ -12,15 +12,16 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   name      String
-  email     String   @unique
+  email     String     @unique
   avatar    String?
   items     Item[]
   tokens    Token[]
   favs      Fav[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  cart      CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 model Token {
@@ -64,6 +65,7 @@ model Item {
   subcategory   Subcategory @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
   subcategoryId Int
   favs          Fav[]
+  cartItem      CartItem[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -78,6 +80,20 @@ model Fav {
   userId    Int
   item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([itemId])
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId    Int
+  qty       Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

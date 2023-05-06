@@ -9,6 +9,7 @@ import type { ParsedUrlQuery } from "querystring";
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import { getPrice } from "@/utils/common";
+import { toast } from "react-hot-toast";
 
 interface ParsedUrlQueryForPage extends ParsedUrlQuery {
   id: string;
@@ -19,6 +20,8 @@ const ItemsDetail: NextPage = () => {
   const { data: user } = useUser();
   const { id } = router.query as ParsedUrlQueryForPage;
   const [qty, setQty] = useState(1);
+
+  const { mutateAsync, isLoading: isAddLoading } = api.cart.add.useMutation();
 
   const { data } = api.items.getById.useQuery(
     {
@@ -72,6 +75,16 @@ const ItemsDetail: NextPage = () => {
       setQty((qty) => qty - 1);
     }
   }, [qty]);
+
+  const handleAddCart = async () => {
+    if (!isAddLoading) {
+      await mutateAsync({ userId: user.id, itemId: parseInt(id), qty }).then(
+        () => {
+          toast.success("item was added to your cart!");
+        }
+      );
+    }
+  };
 
   return (
     <Layout title="item" hasTabBar canGoBack>
@@ -178,7 +191,10 @@ const ItemsDetail: NextPage = () => {
             </button>
           </div>
           <div className="mt-1 w-full">
-            <button className="ring-focus-2 flex-x-center w-full rounded-md bg-lime-500 py-2 font-medium text-white hover:bg-lime-600">
+            <button
+              onClick={handleAddCart}
+              className="ring-focus-2 flex-x-center w-full rounded-md bg-lime-500 py-2 font-medium text-white hover:bg-lime-600"
+            >
               <svg
                 className="icon mr-2"
                 fill="none"
