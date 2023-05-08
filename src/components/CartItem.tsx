@@ -1,19 +1,26 @@
+import type { Prettify, Unpacked } from "@/types/common";
+import type { RouterOutputs } from "@/utils/api";
 import { getPrice } from "@/utils/common";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-type CartItemProps = {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  qty: number;
-  image: string;
-  cartItemId: number;
-  handleOnDelete: (e: React.BaseSyntheticEvent, id: number) => Promise<void>;
-};
+// infer types from the api
+type Cart = Unpacked<
+  NonNullable<Unpacked<RouterOutputs["cart"]["getMyCart"]>>["cart"]
+>;
+type Item = Cart["item"];
+type CartItemProps = Prettify<
+  Pick<Cart, "qty"> & {
+    [P in keyof Pick<Cart, "id"> & string as `cartItemId`]: Pick<Cart, "id">[P];
+  } & Pick<Item, "id" | "name" | "description" | "price" | "image"> & {
+      handleOnDelete: (
+        e: React.BaseSyntheticEvent,
+        id: number
+      ) => Promise<void>;
+    }
+>;
 
 const CartItem: NextPage<CartItemProps> = ({
   id,

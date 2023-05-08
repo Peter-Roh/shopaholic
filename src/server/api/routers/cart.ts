@@ -24,7 +24,7 @@ export const cartRouter = createTRPCRouter({
     });
 
     if (exists) {
-      await ctx.prisma.cartItem.update({
+      const cartItem = await ctx.prisma.cartItem.update({
         where: {
           id: exists.id,
         },
@@ -32,8 +32,9 @@ export const cartRouter = createTRPCRouter({
           qty: exists.qty + qty,
         },
       });
+      return cartItem;
     } else {
-      await ctx.prisma.cartItem.create({
+      const cartItem = await ctx.prisma.cartItem.create({
         data: {
           user: {
             connect: {
@@ -48,6 +49,7 @@ export const cartRouter = createTRPCRouter({
           qty,
         },
       });
+      return cartItem;
     }
   }),
   delete: privateProcedure
