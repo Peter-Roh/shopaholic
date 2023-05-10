@@ -36,21 +36,29 @@ const Cart: NextPage = () => {
     <Layout title="Cart" canGoBack hasTabBar>
       <div className="flex flex-col lg:mx-auto lg:w-3/5">
         <div className="flex flex-col space-y-2 divide-y">
-          {data?.cart.map((item) => {
-            return (
-              <CartItem
-                key={item.id}
-                id={item.itemId}
-                name={item.item.name}
-                description={item.item.description}
-                price={item.item.price}
-                qty={item.qty}
-                image={item.item.image}
-                cartItemId={item.id}
-                handleOnDelete={handleOnDelete}
-              />
-            );
-          })}
+          {data && data.cart.length === 0 ? (
+            <>
+              <div className="flex-y-center my-2 text-gray-600">
+                Item not found.
+              </div>
+            </>
+          ) : (
+            data?.cart.map((item) => {
+              return (
+                <CartItem
+                  key={item.id}
+                  id={item.itemId}
+                  name={item.item.name}
+                  description={item.item.description}
+                  price={item.item.price}
+                  qty={item.qty}
+                  image={item.item.image}
+                  cartItemId={item.id}
+                  handleOnDelete={handleOnDelete}
+                />
+              );
+            })
+          )}
           <div className="mt-4 flex items-center justify-between pt-4 dark:text-slate-100">
             <span className="ml-2 font-semibold">total</span>
             <span className="mr-2 font-semibold">${getPrice(totalPrice)}</span>

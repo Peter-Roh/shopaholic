@@ -5,6 +5,7 @@ import { itemsRouter } from "./routers/items";
 import { cloudflareRouter } from "./routers/cloudflare";
 import { favoriteRouter } from "./routers/favorite";
 import { cartRouter } from "./routers/cart";
+import { commentRouter } from "./routers/comments";
 
 export const appRouter = createTRPCRouter({
   users: usersRouter,
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   cloudflare: cloudflareRouter,
   favorite: favoriteRouter,
   cart: cartRouter,
+  comment: commentRouter,
 });
 
 export type AppRouter = typeof appRouter;

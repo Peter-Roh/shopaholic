@@ -12,16 +12,18 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  name      String
-  email     String     @unique
-  avatar    String?
-  items     Item[]
-  tokens    Token[]
-  favs      Fav[]
-  cart      CartItem[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id           Int           @id @default(autoincrement())
+  name         String
+  email        String        @unique
+  avatar       String?
+  items        Item[]
+  tokens       Token[]
+  favs         Fav[]
+  cart         CartItem[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  comments     Comment[]
+  commentLikes CommentLike[]
 }
 
 model Token {
@@ -68,6 +70,7 @@ model Item {
   cartItem      CartItem[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+  comments      Comment[]
 
   @@index([userId])
   @@index([categoryId])
@@ -99,4 +102,32 @@ model CartItem {
 
   @@index([userId])
   @@index([itemId])
+}
+
+model Comment {
+  id        Int           @id @default(autoincrement())
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  item      Item          @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId    Int
+  comment   String        @db.MediumText
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  likes     CommentLike[]
+
+  @@index([userId])
+  @@index([itemId])
+}
+
+model CommentLike {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([commentId])
 }

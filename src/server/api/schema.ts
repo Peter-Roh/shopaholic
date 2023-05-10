@@ -71,3 +71,23 @@ export const cartAddInput = z.object({
 export const cartDeleteInput = z.object({
   cartItemId: z.number().int().nonnegative(),
 });
+
+export const commentAddInput = z.object({
+  userId: z.number().int().nonnegative(),
+  itemId: z.number().int().nonnegative(),
+  comment: z.string(),
+});
+
+export const commentDeleteInput = z.object({
+  userId: z.number().int().nonnegative(),
+  commentId: z.number().int().nonnegative(),
+});
+
+export const commentGetByItemInput = z.object({
+  itemId: z.number().int().nonnegative(),
+});
+
+export const toggleCommentLikeInput = z.object({
+  userId: z.number().int().nonnegative(),
+  commentId: z.number().int().nonnegative(),
+});

@@ -1,19 +1,25 @@
 import type { NextPage } from "next";
 import Layout from "@/components/Layout";
 import { useRouter } from "next/router";
-import { api } from "@/utils/api";
+import { type RouterInputs, api } from "@/utils/api";
 import Image from "next/image";
 import DefaultUser from "../../../public/default_user.png";
 import useUser from "@/libs/client/useUser";
 import type { ParsedUrlQuery } from "querystring";
-import { useCallback, useState } from "react";
+import { type ChangeEvent, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { getPrice } from "@/utils/common";
 import { toast } from "react-hot-toast";
+import Comment from "@/components/Comment";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { commentAddInput } from "@/server/api/schema";
 
 interface ParsedUrlQueryForPage extends ParsedUrlQuery {
   id: string;
 }
+
+type FormValues = RouterInputs["comment"]["add"];
 
 const ItemsDetail: NextPage = () => {
   const router = useRouter();
@@ -33,6 +39,9 @@ const ItemsDetail: NextPage = () => {
     }
   );
   const utils = api.useContext();
+
+  const { mutateAsync: mutateDeleteAsync, isLoading: isDeleteLoading } =
+    api.comment.delete.useMutation();
 
   // optimistic update
   const { mutate, isLoading } = api.favorite.toggleLike.useMutation({
@@ -85,6 +94,156 @@ const ItemsDetail: NextPage = () => {
       );
     }
   };
+
+  // comment
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    resetField,
+    reset,
+    formState: { isSubmitSuccessful },
+  } = useForm<FormValues>({
+    resolver: zodResolver(commentAddInput),
+  });
+
+  useEffect(() => {
+    register("userId", {
+      required: true,
+      valueAsNumber: true,
+    });
+    register("itemId", {
+      required: true,
+      valueAsNumber: true,
+    });
+  }, [register]);
+
+  useEffect(() => {
+    if (user) {
+      setValue("userId", user.id);
+    }
+
+    if (id) {
+      setValue("itemId", parseInt(id));
+    }
+  }, [setValue, user, id]);
+
+  // textarea auto resize
+  const textareaOnChange = useCallback(
+    (e: ChangeEvent<HTMLTextAreaElement>) => {
+      e.target.style.height = "auto";
+      e.target.style.height = `${e.target.scrollHeight}px`;
+    },
+    []
+  );
+
+  const {
+    mutateAsync: mutateAddAsync,
+    isSuccess,
+    reset: resetMutation,
+  } = api.comment.add.useMutation();
+
+  const { data: comments, refetch: refetchComments } =
+    api.comment.getByItem.useQuery(
+      { itemId: parseInt(id) },
+      {
+        enabled: id !== undefined,
+      }
+    );
+
+  const onValid: SubmitHandler<FormValues> = async ({
+    userId,
+    itemId,
+    comment,
+  }) => {
+    if (!isSuccess) {
+      await mutateAddAsync({ userId, itemId, comment }).then(() => {
+        void refetchComments();
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset(undefined, {
+        keepValues: true,
+      });
+      resetField("comment");
+      resetMutation();
+    }
+  }, [isSubmitSuccessful, reset, resetField, resetMutation]);
+
+  const onError = (errors: object) => {
+    console.log(errors);
+    if (Object.keys(errors).includes("comment")) {
+      toast.error("Please write something as a comment.");
+    }
+  };
+
+  // delete comment
+  const handleOnDelete = useCallback(
+    async (commentId: number) => {
+      if (!isDeleteLoading) {
+        await mutateDeleteAsync({ userId: user.id, commentId }).then(() => {
+          void refetchComments();
+        });
+      }
+    },
+    [mutateDeleteAsync, refetchComments, user?.id, isDeleteLoading]
+  );
+
+  // like comment
+  const { mutate: mutateLikeComment, isLoading: isLikeCommentLoading } =
+    api.comment.toggleLike.useMutation({
+      onMutate: async ({ commentId }) => {
+        await utils.comment.getByItem.cancel({ itemId: parseInt(id) });
+        const prevData = utils.comment.getByItem.getData({
+          itemId: parseInt(id),
+        });
+        utils.comment.getByItem.setData({ itemId: parseInt(id) }, (old) => {
+          if (old === undefined) {
+            return;
+          }
+
+          old.map((elt) => {
+            if (elt.id === commentId) {
+              if (elt.likes.length === 0) {
+                elt.likes.push({ userId: user.id });
+                elt._count.likes += 1;
+              } else {
+                elt.likes.shift();
+                elt._count.likes -= 1;
+              }
+            }
+          });
+
+          return old;
+        });
+        return {
+          prevData,
+        };
+      },
+      onError: (err, newData, ctx) => {
+        utils.comment.getByItem.setData(
+          { itemId: parseInt(id) },
+          ctx?.prevData
+        );
+      },
+      onSettled: () => {
+        void utils.comment.getByItem.invalidate({
+          itemId: parseInt(id),
+        });
+      },
+    });
+
+  const onCommentLikeClick = useCallback(
+    (commentId: number) => {
+      if (!isLikeCommentLoading) {
+        mutateLikeComment({ userId: user.id, commentId });
+      }
+    },
+    [mutateLikeComment, user?.id, isLikeCommentLoading]
+  );
 
   return (
     <Layout title="item" hasTabBar canGoBack>
@@ -274,6 +433,41 @@ const ItemsDetail: NextPage = () => {
               );
             })}
           </div>
+        </div>
+        <form onSubmit={handleSubmit(onValid, onError)}>
+          <div className="flex flex-col">
+            <textarea
+              {...register("comment", {
+                required: true,
+              })}
+              rows={1}
+              onChange={textareaOnChange}
+              placeholder="Add comments..."
+              className="no-scrollbar w-full appearance-none border-x-0 border-t-0 border-b border-b-gray-400 bg-inherit bg-opacity-30 px-3 py-2 placeholder-gray-400 focus:border-b-2 focus:border-b-cyan-500 focus:outline-none focus:ring-0"
+            />
+            <button className="ring-focus-2 ml-auto mt-2 rounded-3xl border-transparent bg-cyan-400 px-3 py-2 font-bold text-white shadow-sm hover:bg-cyan-500">
+              Comment
+            </button>
+          </div>
+        </form>
+        <div className="mb-8 mt-2 flex flex-col items-start justify-start space-y-4">
+          {comments?.map((comment) => {
+            return (
+              <Comment
+                key={comment.id}
+                id={comment.id}
+                comment={comment.comment}
+                isMine={comment.user.id === user?.id}
+                name={comment.user.name}
+                avatar={comment.user.avatar}
+                updatedAt={new Date()}
+                isLiked={comment.likes[0]?.userId === user?.id}
+                likes={comment._count.likes}
+                handleOnLike={onCommentLikeClick}
+                handleOnDelete={handleOnDelete}
+              />
+            );
+          })}
         </div>
       </div>
     </Layout>
