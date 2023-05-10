@@ -26,6 +26,7 @@ const WatchList: NextPage = () => {
                 price={item.item.price}
                 image={item.item.image}
                 favs={item.item._count.favs}
+                comments={item.item._count.comments}
               />
             );
           })

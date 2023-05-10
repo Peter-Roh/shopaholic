@@ -66,6 +66,7 @@ export const itemsRouter = createTRPCRouter({
                 _count: {
                   select: {
                     favs: true,
+                    comments: true,
                   },
                 },
               },
@@ -75,6 +76,7 @@ export const itemsRouter = createTRPCRouter({
                 _count: {
                   select: {
                     favs: true,
+                    comments: true,
                   },
                 },
               },

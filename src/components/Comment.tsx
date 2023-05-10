@@ -3,11 +3,12 @@ import type { RouterOutputs } from "@/utils/api";
 import type { NextPage } from "next";
 import Image from "next/image";
 import DefaultUser from "../../public/default_user.png";
+import dayjs from "@/libs/client/day";
 
 type Comment = Unpacked<RouterOutputs["comment"]["getByItem"]>;
 type User = Comment["user"];
 type CommentProps = Prettify<
-  Pick<Comment, "id" | "comment" | "updatedAt"> &
+  Pick<Comment, "id" | "comment" | "createdAt"> &
     Pick<User, "name" | "avatar"> &
     Pick<Comment, "_count">["_count"] & {
       isMine: boolean;
@@ -25,7 +26,7 @@ const Comment: NextPage<CommentProps> = ({
   avatar,
   likes,
   isLiked,
-  updatedAt,
+  createdAt,
   handleOnLike,
   handleOnDelete,
 }) => {
@@ -54,8 +55,8 @@ const Comment: NextPage<CommentProps> = ({
       <div className="ml-4 flex flex-col">
         <div className="flex justify-start">
           <span className="text-gray-900 dark:text-slate-100">{name}</span>
-          <span className="ml-2 flex items-end text-sm text-slate-500">
-            1시간 전
+          <span className="ml-2 flex items-center text-xs text-slate-500">
+            {` · ${dayjs(createdAt).fromNow()}`}
           </span>
         </div>
         <div className="text-gray-900 dark:text-slate-100">{comment}</div>

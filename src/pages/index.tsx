@@ -38,6 +38,7 @@ const Home: NextPage = () => {
                   price={item.price}
                   image={item.image}
                   favs={item._count.favs}
+                  comments={item._count.comments}
                 />
               );
             })

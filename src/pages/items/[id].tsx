@@ -80,10 +80,8 @@ const ItemsDetail: NextPage = () => {
   }, []);
 
   const onClickMinus = useCallback(() => {
-    if (qty > 1) {
-      setQty((qty) => qty - 1);
-    }
-  }, [qty]);
+    setQty((qty) => (qty > 1 ? qty - 1 : qty));
+  }, []);
 
   const handleAddCart = async () => {
     if (!isAddLoading) {
@@ -174,7 +172,6 @@ const ItemsDetail: NextPage = () => {
   }, [isSubmitSuccessful, reset, resetField, resetMutation]);
 
   const onError = (errors: object) => {
-    console.log(errors);
     if (Object.keys(errors).includes("comment")) {
       toast.error("Please write something as a comment.");
     }
@@ -192,7 +189,7 @@ const ItemsDetail: NextPage = () => {
     [mutateDeleteAsync, refetchComments, user?.id, isDeleteLoading]
   );
 
-  // like comment
+  // like comment - optimistic update
   const { mutate: mutateLikeComment, isLoading: isLikeCommentLoading } =
     api.comment.toggleLike.useMutation({
       onMutate: async ({ commentId }) => {
@@ -443,7 +440,7 @@ const ItemsDetail: NextPage = () => {
               rows={1}
               onChange={textareaOnChange}
               placeholder="Add comments..."
-              className="no-scrollbar w-full appearance-none border-x-0 border-t-0 border-b border-b-gray-400 bg-inherit bg-opacity-30 px-3 py-2 placeholder-gray-400 focus:border-b-2 focus:border-b-cyan-500 focus:outline-none focus:ring-0"
+              className="no-scrollbar w-full appearance-none border-x-0 border-t-0 border-b border-b-gray-400 bg-inherit bg-opacity-30 px-3 py-2 placeholder-gray-400 focus:border-b-2 focus:border-b-cyan-500 focus:outline-none focus:ring-0 dark:text-slate-100"
             />
             <button className="ring-focus-2 ml-auto mt-2 rounded-3xl border-transparent bg-cyan-400 px-3 py-2 font-bold text-white shadow-sm hover:bg-cyan-500">
               Comment
@@ -460,7 +457,7 @@ const ItemsDetail: NextPage = () => {
                 isMine={comment.user.id === user?.id}
                 name={comment.user.name}
                 avatar={comment.user.avatar}
-                updatedAt={new Date()}
+                createdAt={comment.createdAt}
                 isLiked={comment.likes[0]?.userId === user?.id}
                 likes={comment._count.likes}
                 handleOnLike={onCommentLikeClick}

@@ -61,6 +61,7 @@ export const favoriteRouter = createTRPCRouter({
                 _count: {
                   select: {
                     favs: true,
+                    comments: true,
                   },
                 },
               },
