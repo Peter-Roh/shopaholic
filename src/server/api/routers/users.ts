@@ -34,6 +34,18 @@ export const usersRouter = createTRPCRouter({
         where: {
           id: input.userId,
         },
+        include: {
+          items: {
+            include: {
+              _count: {
+                select: {
+                  favs: true,
+                  comments: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!user) {

@@ -243,7 +243,7 @@ const ItemsDetail: NextPage = () => {
   );
 
   return (
-    <Layout title="item" hasTabBar canGoBack>
+    <Layout title="Item" hasTabBar canGoBack>
       <div className="lg:mx-auto lg:w-3/5">
         <div>
           <div className="relative aspect-[4/3] w-full">
@@ -395,9 +395,13 @@ const ItemsDetail: NextPage = () => {
             <p className="text-sm font-medium text-gray-700 dark:text-slate-200">
               {data?.user?.name}
             </p>
-            <p className="text-xs font-medium text-gray-500 dark:text-slate-400">
-              View profile &rarr;
-            </p>
+            {data && data.user.id ? (
+              <Link href={`/profile/${data.user.id}`}>
+                <p className="text-xs font-medium text-gray-500 dark:text-slate-400">
+                  View profile &rarr;
+                </p>
+              </Link>
+            ) : null}
           </div>
         </div>
         <div>
