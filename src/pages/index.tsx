@@ -5,6 +5,7 @@ import Link from "next/link";
 import { api } from "@/utils/api";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
+import CarouselComponent from "@/components/Carousel";
 
 const Home: NextPage = () => {
   const value = useSelector((state: RootState) => state.category);
@@ -16,10 +17,7 @@ const Home: NextPage = () => {
   return (
     <Layout title="Home" hasTabBar canGoBack>
       <div className="mt-14 flex w-full flex-col justify-start lg:mx-auto lg:w-3/5">
-        <div className="aspect-video w-full bg-gray-600" />
-        {
-          // TODO carousel
-        }
+        <CarouselComponent />
         <div className="mt-4 flex flex-col space-y-2 divide-y">
           {data && data.length === 0 ? (
             <>
