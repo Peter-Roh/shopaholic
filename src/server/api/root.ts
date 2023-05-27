@@ -6,8 +6,10 @@ import { cloudflareRouter } from "./routers/cloudflare";
 import { favoriteRouter } from "./routers/favorite";
 import { cartRouter } from "./routers/cart";
 import { commentRouter } from "./routers/comments";
+import { authRouter } from "./routers/auth";
 
 export const appRouter = createTRPCRouter({
+  auth: authRouter,
   users: usersRouter,
   categories: categoriesRouter,
   items: itemsRouter,

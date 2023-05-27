@@ -91,3 +91,7 @@ export const toggleCommentLikeInput = z.object({
   userId: z.number().int().nonnegative(),
   commentId: z.number().int().nonnegative(),
 });
+
+export const authGoogleInput = z.object({
+  accessToken: z.string(),
+});

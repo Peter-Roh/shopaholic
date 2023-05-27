@@ -6,10 +6,13 @@ import { type RouterInputs, api } from "@/utils/api";
 import { toast } from "react-hot-toast";
 import { enterInput } from "@/server/api/schema";
 import emailjs from "@emailjs/browser";
+import { useCallback, useMemo } from "react";
+import { useRouter } from "next/router";
 
 type FormValues = RouterInputs["users"]["login"];
 
 const Login: NextPage = () => {
+  const router = useRouter();
   const { register, handleSubmit } = useForm<FormValues>({
     resolver: zodResolver(enterInput),
   });
@@ -46,6 +49,20 @@ const Login: NextPage = () => {
   const onError = () => {
     toast.error("Please enter a valid email address.");
   };
+
+  const GOOGLE_LOGIN_URL = useMemo(() => {
+    return `https://accounts.google.com/o/oauth2/auth?client_id=${process.env
+      .NEXT_PUBLIC_GOOGLE_ID!}&redirect_uri=${process.env
+      .NEXT_PUBLIC_GOOGLE_REDIRECT_URI!}&response_type=token&scope=https://www.googleapis.com/auth/userinfo.email`;
+  }, []);
+
+  const googleLogin = useCallback(() => {
+    void router.push(GOOGLE_LOGIN_URL);
+  }, [router, GOOGLE_LOGIN_URL]);
+
+  const githubLogin = useCallback(() => {
+    //
+  }, []);
 
   return (
     <Layout title="Login" canGoBack>
@@ -113,7 +130,13 @@ const Login: NextPage = () => {
             </div>
           </div>
           <div className="mt-4 grid w-full grid-cols-2 gap-3 px-4 lg:w-3/5">
-            <button className="flex-x-center ring-focus rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm hover:bg-gray-300 focus:ring-1">
+            {
+              // * google
+            }
+            <button
+              className="flex-x-center ring-focus rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm hover:bg-gray-300 focus:ring-1"
+              onClick={googleLogin}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24"
@@ -139,7 +162,13 @@ const Login: NextPage = () => {
                 <path d="M1 1h22v22H1z" fill="none" />
               </svg>
             </button>
-            <button className="flex-x-center ring-focus rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm hover:bg-gray-300 focus:ring-1">
+            {
+              // * github
+            }
+            <button
+              className="flex-x-center ring-focus rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm hover:bg-gray-300 focus:ring-1"
+              onClick={githubLogin}
+            >
               <svg
                 className="h-5 w-5"
                 aria-hidden="true"
