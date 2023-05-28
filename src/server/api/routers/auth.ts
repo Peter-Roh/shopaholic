@@ -1,5 +1,9 @@
-import type { GoogleApiResponse } from "@/types/auth";
-import { authGoogleInput } from "../schema";
+import type {
+  GithubAccessTokenResponse,
+  GithubData,
+  GoogleApiResponse,
+} from "@/types/auth";
+import { authGithubInput, authGoogleInput } from "../schema";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const authRouter = createTRPCRouter({
@@ -28,6 +32,58 @@ export const authRouter = createTRPCRouter({
           data: {
             name,
             email: response.email,
+          },
+        });
+
+        ctx.session.user = {
+          id: newUser.id,
+        };
+      } else {
+        ctx.session.user = {
+          id: user.id,
+        };
+      }
+
+      await ctx.session.save();
+    }),
+  github: publicProcedure
+    .input(authGithubInput)
+    .mutation(async ({ ctx, input }) => {
+      const response = (await (
+        await fetch(
+          `https://github.com/login/oauth/access_token?client_id=${process.env
+            .GITHUB_ID!}&client_secret=${process.env.GITHUB_SECRET!}&code=${
+            input.code
+          }`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        )
+      ).json()) as GithubAccessTokenResponse;
+
+      const data = (await (
+        await fetch(`https://api.github.com/user`, {
+          method: "GET",
+          headers: {
+            authorization: `token ${response.access_token}`,
+          },
+        })
+      ).json()) as GithubData;
+
+      const user = await ctx.prisma.user.findUnique({
+        where: {
+          email: data.email,
+        },
+      });
+
+      if (!user) {
+        const newUser = await ctx.prisma.user.create({
+          data: {
+            name: data.name,
+            email: data.email,
           },
         });
 

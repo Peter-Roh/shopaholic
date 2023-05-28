@@ -56,13 +56,18 @@ const Login: NextPage = () => {
       .NEXT_PUBLIC_GOOGLE_REDIRECT_URI!}&response_type=token&scope=https://www.googleapis.com/auth/userinfo.email`;
   }, []);
 
+  const GITHUB_LOGIN_URL = useMemo(() => {
+    return `https://github.com/login/oauth/authorize?client_id=${process.env
+      .NEXT_PUBLIC_GITHUB_ID!}`;
+  }, []);
+
   const googleLogin = useCallback(() => {
     void router.push(GOOGLE_LOGIN_URL);
   }, [router, GOOGLE_LOGIN_URL]);
 
   const githubLogin = useCallback(() => {
-    //
-  }, []);
+    void router.push(GITHUB_LOGIN_URL);
+  }, [router, GITHUB_LOGIN_URL]);
 
   return (
     <Layout title="Login" canGoBack>

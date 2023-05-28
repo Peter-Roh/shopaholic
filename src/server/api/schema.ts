@@ -95,3 +95,7 @@ export const toggleCommentLikeInput = z.object({
 export const authGoogleInput = z.object({
   accessToken: z.string(),
 });
+
+export const authGithubInput = z.object({
+  code: z.string(),
+});
