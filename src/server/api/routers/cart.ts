@@ -16,6 +16,15 @@ export const cartRouter = createTRPCRouter({
       });
     }
 
+    const items = await ctx.prisma.cartItem.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
     const exists = await ctx.prisma.cartItem.findFirst({
       where: {
         userId,
@@ -34,6 +43,13 @@ export const cartRouter = createTRPCRouter({
       });
       return cartItem;
     } else {
+      if (items.length >= 5) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cart is full",
+        });
+      }
+
       const cartItem = await ctx.prisma.cartItem.create({
         data: {
           user: {

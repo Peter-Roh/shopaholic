@@ -59,7 +59,7 @@ const Cart: NextPage = () => {
               );
             })
           )}
-          <div className="mt-4 flex items-center justify-between pt-4 dark:text-slate-100">
+          <div className="mt-4 flex items-center justify-between py-4 dark:text-slate-100">
             <span className="ml-2 font-semibold">total</span>
             <span className="mr-2 font-semibold">${getPrice(totalPrice)}</span>
           </div>
