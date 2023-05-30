@@ -34,7 +34,7 @@ const CartItem: NextPage<CartItemProps> = ({
 }) => {
   return (
     <Link href={`/items/${id}`}>
-      <div className="flex cursor-pointer items-center justify-between">
+      <div className="mt-1 flex cursor-pointer items-center justify-between">
         <div className="flex">
           <div className="relative h-20 w-20">
             <Image

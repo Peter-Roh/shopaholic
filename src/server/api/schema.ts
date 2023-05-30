@@ -100,3 +100,7 @@ export const authGoogleInput = z.object({
 export const authGithubInput = z.object({
   code: z.string(),
 });
+
+export const watchlistInput = z.object({
+  page: z.number().int(),
+});

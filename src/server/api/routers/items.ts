@@ -52,7 +52,7 @@ export const itemsRouter = createTRPCRouter({
   }),
   getMany: privateProcedure
     .input(getManyInput)
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const { categoryId, subcategoryId } = input;
 
       const items =

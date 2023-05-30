@@ -1,5 +1,5 @@
 import { ratelimit } from "@/server/ratelimiter";
-import { toggleLikeInput } from "../schema";
+import { toggleLikeInput, watchlistInput } from "../schema";
 import { createTRPCRouter, privateProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
@@ -48,29 +48,34 @@ export const favoriteRouter = createTRPCRouter({
         });
       }
     }),
-  watchlist: privateProcedure.query(({ ctx }) => {
-    const favs = ctx.prisma.user.findFirst({
-      where: {
-        id: ctx.userId,
-      },
-      select: {
-        favs: {
-          include: {
-            item: {
-              include: {
-                _count: {
-                  select: {
-                    favs: true,
-                    comments: true,
+  watchlist: privateProcedure
+    .input(watchlistInput)
+    .mutation(({ ctx, input }) => {
+      const { page } = input;
+      const favs = ctx.prisma.user.findFirst({
+        where: {
+          id: ctx.userId,
+        },
+        select: {
+          favs: {
+            include: {
+              item: {
+                include: {
+                  _count: {
+                    select: {
+                      favs: true,
+                      comments: true,
+                    },
                   },
                 },
               },
             },
+            take: 10,
+            skip: 10 * page,
           },
         },
-      },
-    });
+      });
 
-    return favs;
-  }),
+      return favs;
+    }),
 });

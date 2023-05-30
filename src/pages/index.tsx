@@ -2,18 +2,49 @@ import type { NextPage } from "next";
 import Layout from "@/components/Layout";
 import Item from "@/components/Item";
 import Link from "next/link";
-import { api } from "@/utils/api";
+import { type RouterOutputs, api } from "@/utils/api";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import CarouselComponent from "@/components/Carousel";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useCallback, useEffect, useState } from "react";
+
+type ItemsArray = RouterOutputs["items"]["getMany"];
 
 const Home: NextPage = () => {
-  const value = useSelector((state: RootState) => state.category);
-  const { data } = api.items.getMany.useQuery({
-    categoryId: value.categoryId,
-    subcategoryId: value.subcategoryId,
-    page: 0,
-  });
+  const { categoryId, subcategoryId } = useSelector(
+    (state: RootState) => state.category
+  );
+  const [data, setData] = useState<ItemsArray>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const { mutateAsync } = api.items.getMany.useMutation();
+
+  useEffect(() => {
+    void mutateAsync({
+      categoryId,
+      subcategoryId,
+      page: 0,
+    }).then((items) => {
+      setData(items);
+    });
+  }, [categoryId, subcategoryId, mutateAsync]);
+
+  const getMore = useCallback(
+    () =>
+      mutateAsync({
+        categoryId,
+        subcategoryId,
+        page,
+      }).then((items) => {
+        setData((prev) => [...prev, ...items]);
+        setPage((p) => p + 1);
+        if (items.length < 5) {
+          setHasMore(false);
+        }
+      }),
+    [mutateAsync, categoryId, subcategoryId, page]
+  );
 
   return (
     <Layout title="Home" hasTabBar canGoBack>
@@ -27,20 +58,29 @@ const Home: NextPage = () => {
               </div>
             </>
           ) : (
-            data?.map((item) => {
-              return (
-                <Item
-                  key={item.id}
-                  id={item.id}
-                  name={item.name}
-                  description={item.description}
-                  price={item.price}
-                  image={item.image}
-                  favs={item._count.favs}
-                  comments={item._count.comments}
-                />
-              );
-            })
+            <>
+              <InfiniteScroll
+                dataLength={data.length}
+                next={getMore}
+                hasMore={hasMore}
+                loader={<div className="flex-x-center">Loading...</div>}
+              >
+                {data.map((item) => {
+                  return (
+                    <Item
+                      key={item.id}
+                      id={item.id}
+                      name={item.name}
+                      description={item.description}
+                      price={item.price}
+                      image={item.image}
+                      favs={item._count.favs}
+                      comments={item._count.comments}
+                    />
+                  );
+                })}
+              </InfiniteScroll>
+            </>
           )}
         </div>
       </div>
