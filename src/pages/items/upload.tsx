@@ -326,7 +326,10 @@ const Upload: NextPage = () => {
                   validate: {
                     positive: (v) => v > 0,
                   },
-                  setValueAs: (v) => (v === "" ? null : v * 100), // dollar 소수점 처리
+                  setValueAs: (v: string) =>
+                    v === ""
+                      ? null
+                      : parseInt((parseFloat(v) * 100).toFixed(2).toString()), // dollar 소수점 처리
                 })}
                 id="price"
                 className="ring-focus w-full appearance-none rounded-md border border-gray-400 px-3 py-2 pl-7 placeholder-gray-400 shadow-sm focus:border-cyan-500"

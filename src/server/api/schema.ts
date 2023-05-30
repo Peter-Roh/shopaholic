@@ -47,6 +47,7 @@ export const cloudflareFileOutput = z.object({
 export const getManyInput = z.object({
   categoryId: z.number().int().optional(),
   subcategoryId: z.number().int().optional(),
+  page: z.number().int(),
 });
 
 export const getItemByIdInput = z.object({

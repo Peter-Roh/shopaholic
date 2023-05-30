@@ -25,7 +25,7 @@ const Item: NextPage<ItemProps> = ({
     <Link href={`/items/${id}`}>
       <div className="flex cursor-pointer items-center justify-between space-x-4 pt-2">
         <div className="flex">
-          <div className="relative h-20 w-20">
+          <div className="relative h-20 min-h-[80px] w-20 min-w-[80px]">
             <Image
               alt="item"
               className="rounded-md object-contain"

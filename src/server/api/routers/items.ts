@@ -70,6 +70,8 @@ export const itemsRouter = createTRPCRouter({
                   },
                 },
               },
+              take: 5,
+              skip: 5 * input.page,
             })
           : await ctx.prisma.item.findMany({
               include: {
@@ -80,6 +82,8 @@ export const itemsRouter = createTRPCRouter({
                   },
                 },
               },
+              take: 5,
+              skip: 5 * input.page,
             });
 
       return items;

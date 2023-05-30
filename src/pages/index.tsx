@@ -12,6 +12,7 @@ const Home: NextPage = () => {
   const { data } = api.items.getMany.useQuery({
     categoryId: value.categoryId,
     subcategoryId: value.subcategoryId,
+    page: 0,
   });
 
   return (
