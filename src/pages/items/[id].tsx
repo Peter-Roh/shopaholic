@@ -151,7 +151,7 @@ const ItemsDetail: NextPage = () => {
     api.comment.getByItem.useInfiniteQuery(
       {
         itemId: parseInt(id),
-        limit: 5,
+        limit: 20,
         skip: page,
       },
       {
@@ -229,14 +229,14 @@ const ItemsDetail: NextPage = () => {
       onMutate: async ({ commentId }) => {
         await utils.comment.getByItem.cancel({
           itemId: parseInt(id),
-          limit: 5,
+          limit: 20,
         });
         const prevData = utils.comment.getByItem.getData({
           itemId: parseInt(id),
-          limit: 5,
+          limit: 20,
         });
         utils.comment.getByItem.setData(
-          { itemId: parseInt(id), limit: 5 },
+          { itemId: parseInt(id), limit: 20 },
           (old) => {
             if (old === undefined) {
               return;
@@ -263,7 +263,7 @@ const ItemsDetail: NextPage = () => {
       },
       onError: (err, newData, ctx) => {
         utils.comment.getByItem.setData(
-          { itemId: parseInt(id), limit: 5 },
+          { itemId: parseInt(id), limit: 20 },
           ctx?.prevData
         );
       },
