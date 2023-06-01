@@ -59,6 +59,7 @@ const CategoryBar: NextPage = () => {
       setCategory(elt);
       dispatch(saveCategoryId(elt.id));
       setSubcategory(undefined);
+      dispatch(saveSubcategoryId(-1));
     },
     [dispatch]
   );

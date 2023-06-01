@@ -1,11 +1,18 @@
 import type { NextPage } from "next";
 import Layout from "@/components/Layout";
-import { api } from "@/utils/api";
+import { type RouterOutputs, api } from "@/utils/api";
 import type { ParsedUrlQuery } from "querystring";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import DefaultUser from "../../../public/default_user.png";
 import Item from "@/components/Item";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useCallback, useState } from "react";
+
+type Unpacked<T> = T extends (infer U)[] ? U : T;
+type ItemsArray = Unpacked<
+  Pick<RouterOutputs["users"]["getById"], "user">
+>["user"]["items"];
 
 interface ParsedUrlQueryForPage extends ParsedUrlQuery {
   id: string;
@@ -14,24 +21,46 @@ interface ParsedUrlQueryForPage extends ParsedUrlQuery {
 const Profile: NextPage = () => {
   const router = useRouter();
   const { id } = router.query as ParsedUrlQueryForPage;
-  const { data } = api.users.getById.useQuery(
-    { userId: parseInt(id) },
+  const [itemsData, setItemsData] = useState<ItemsArray>([]);
+  const [page, setPage] = useState(0);
+  const { data, fetchNextPage } = api.users.getById.useInfiniteQuery(
+    {
+      userId: parseInt(id),
+      limit: 20,
+      skip: page,
+    },
     {
       enabled: id !== undefined,
+      onSuccess: (data) => {
+        setItemsData((prev) => {
+          if (data) {
+            return [...prev, ...data.pages[0]!.user.items];
+          }
+          return prev;
+        });
+      },
       onError: () => void router.push("/"),
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
     }
   );
+
+  const getMore = useCallback(() => {
+    setPage((p) => p + 1),
+      () => {
+        void fetchNextPage();
+      };
+  }, [fetchNextPage]);
 
   return (
     <Layout title="Profile" hasTabBar canGoBack>
       <div className="lg:mx-auto lg:w-3/5">
         <div className="mt-4 flex items-center space-x-5">
           <div className="relative h-20 w-20 rounded-full">
-            {data?.avatar ? (
+            {data?.pages[0]!.user.avatar ? (
               <Image
                 alt="profile"
                 className="rounded-full"
-                src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${data.avatar}/avatar`}
+                src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${data.pages[0].user.avatar}/avatar`}
                 sizes="80px"
                 fill
               />
@@ -49,9 +78,11 @@ const Profile: NextPage = () => {
           <div className="flex flex-col">
             <div className="flex flex-col">
               <span className="text-xl font-semibold text-gray-900 dark:text-slate-100">
-                {data?.name}
+                {data?.pages[0]!.user.name}
               </span>
-              <span className="text-xs text-gray-500">{data?.email}</span>
+              <span className="text-xs text-gray-500">
+                {data?.pages[0]?.user?.email}
+              </span>
             </div>
           </div>
         </div>
@@ -60,20 +91,29 @@ const Profile: NextPage = () => {
             Selling Items
           </span>
           <div className="flex flex-col space-y-2 divide-y">
-            {data?.items.map((item) => {
-              return (
-                <Item
-                  key={item.id}
-                  id={item.id}
-                  name={item.name}
-                  description={item.description}
-                  price={item.price}
-                  image={item.image}
-                  favs={item._count.favs}
-                  comments={item._count.comments}
-                />
-              );
-            })}
+            {data && (
+              <InfiniteScroll
+                dataLength={itemsData.length}
+                next={getMore}
+                hasMore={data.pages[0]!.hasMore}
+                loader={<div className="flex-x-center">Loading...</div>}
+              >
+                {itemsData.map((item) => {
+                  return (
+                    <Item
+                      key={item.id}
+                      id={item.id}
+                      name={item.name}
+                      description={item.description}
+                      price={item.price}
+                      image={item.image}
+                      favs={item._count.favs}
+                      comments={item._count.comments}
+                    />
+                  );
+                })}
+              </InfiniteScroll>
+            )}
           </div>
         </div>
       </div>

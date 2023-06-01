@@ -70,8 +70,8 @@ export const favoriteRouter = createTRPCRouter({
                 },
               },
             },
-            take: 10,
-            skip: 10 * page,
+            take: 20,
+            skip: 20 * page,
           },
         },
       });

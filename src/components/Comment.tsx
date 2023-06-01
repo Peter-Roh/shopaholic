@@ -5,7 +5,7 @@ import Image from "next/image";
 import DefaultUser from "../../public/default_user.png";
 import dayjs from "@/libs/client/day";
 
-type Comment = Unpacked<RouterOutputs["comment"]["getByItem"]>;
+type Comment = Unpacked<RouterOutputs["comment"]["getByItem"]["comments"]>;
 type User = Comment["user"];
 type CommentProps = Prettify<
   Pick<Comment, "id" | "comment" | "createdAt"> &

@@ -56,6 +56,9 @@ export const getItemByIdInput = z.object({
 
 export const getUserByIdInput = z.object({
   userId: z.number().int().nonnegative(),
+  limit: z.number(),
+  skip: z.number().optional(),
+  cursor: z.number().int().optional(),
 });
 
 export const toggleLikeInput = z.object({
@@ -86,6 +89,9 @@ export const commentDeleteInput = z.object({
 
 export const commentGetByItemInput = z.object({
   itemId: z.number().int().nonnegative(),
+  limit: z.number(),
+  skip: z.number().optional(),
+  cursor: z.number().int().optional(),
 });
 
 export const toggleCommentLikeInput = z.object({

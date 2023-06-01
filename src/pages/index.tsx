@@ -21,6 +21,13 @@ const Home: NextPage = () => {
   const { mutateAsync } = api.items.getMany.useMutation();
 
   useEffect(() => {
+    if (categoryId !== -1) {
+      setHasMore(true);
+      setPage(1);
+    }
+  }, [categoryId]);
+
+  useEffect(() => {
     void mutateAsync({
       categoryId,
       subcategoryId,
@@ -30,21 +37,19 @@ const Home: NextPage = () => {
     });
   }, [categoryId, subcategoryId, mutateAsync]);
 
-  const getMore = useCallback(
-    () =>
-      mutateAsync({
-        categoryId,
-        subcategoryId,
-        page,
-      }).then((items) => {
-        setData((prev) => [...prev, ...items]);
-        setPage((p) => p + 1);
-        if (items.length < 5) {
-          setHasMore(false);
-        }
-      }),
-    [mutateAsync, categoryId, subcategoryId, page]
-  );
+  const getMore = useCallback(() => {
+    void mutateAsync({
+      categoryId,
+      subcategoryId,
+      page,
+    }).then((items) => {
+      setData((prev) => [...prev, ...items]);
+      setPage((p) => p + 1);
+      if (items.length < 5) {
+        setHasMore(false);
+      }
+    });
+  }, [mutateAsync, categoryId, subcategoryId, page]);
 
   return (
     <Layout title="Home" hasTabBar canGoBack>

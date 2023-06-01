@@ -23,7 +23,7 @@ export const commentRouter = createTRPCRouter({
         });
       }
 
-      await ctx.prisma.comment.create({
+      const newData = await ctx.prisma.comment.create({
         data: {
           user: {
             connect: {
@@ -38,6 +38,38 @@ export const commentRouter = createTRPCRouter({
           comment,
         },
       });
+
+      const newComment = await ctx.prisma.comment.findFirst({
+        where: {
+          id: newData.id,
+        },
+        include: {
+          _count: {
+            select: {
+              likes: true,
+            },
+          },
+          user: {
+            select: {
+              id: true,
+              name: true,
+              avatar: true,
+            },
+          },
+          likes: {
+            select: {
+              userId: true,
+            },
+            where: {
+              userId: {
+                equals: ctx.userId,
+              },
+            },
+          },
+        },
+      });
+
+      return newComment;
     }),
   delete: privateProcedure
     .input(commentDeleteInput)
@@ -73,7 +105,7 @@ export const commentRouter = createTRPCRouter({
   getByItem: privateProcedure
     .input(commentGetByItemInput)
     .query(async ({ ctx, input }) => {
-      const { itemId } = input;
+      const { itemId, limit, skip, cursor } = input;
 
       const comments = await ctx.prisma.comment.findMany({
         where: {
@@ -103,9 +135,32 @@ export const commentRouter = createTRPCRouter({
             },
           },
         },
+        orderBy: {
+          id: "desc",
+        },
+        take: limit + 1,
+        cursor: cursor
+          ? {
+              id: cursor,
+            }
+          : undefined,
+        skip: skip ? limit * skip : undefined,
       });
 
-      return comments;
+      let nextCursor: typeof cursor | undefined = undefined;
+      let hasMore = false;
+
+      if (comments.length > limit) {
+        const nextItem = comments.pop();
+        nextCursor = nextItem!.id;
+        hasMore = true;
+      }
+
+      return {
+        comments,
+        nextCursor,
+        hasMore,
+      };
     }),
   toggleLike: privateProcedure
     .input(toggleCommentLikeInput)

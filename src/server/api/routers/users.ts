@@ -30,9 +30,10 @@ export const usersRouter = createTRPCRouter({
   getById: privateProcedure
     .input(getUserByIdInput)
     .query(async ({ ctx, input }) => {
+      const { userId, limit, skip, cursor } = input;
       const user = await ctx.prisma.user.findUnique({
         where: {
-          id: input.userId,
+          id: userId,
         },
         include: {
           items: {
@@ -44,6 +45,13 @@ export const usersRouter = createTRPCRouter({
                 },
               },
             },
+            cursor: cursor
+              ? {
+                  id: cursor,
+                }
+              : undefined,
+            take: limit + 1,
+            skip: skip ? limit * skip : undefined,
           },
         },
       });
@@ -52,7 +60,20 @@ export const usersRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "User Not Found" });
       }
 
-      return user;
+      let nextCursor: typeof cursor | undefined = undefined;
+      let hasMore = false;
+
+      if (user.items.length > limit) {
+        const nextItem = user.items.pop();
+        nextCursor = nextItem!.id;
+        hasMore = true;
+      }
+
+      return {
+        user,
+        nextCursor,
+        hasMore,
+      };
     }),
   login: publicProcedure.input(enterInput).mutation(async ({ ctx, input }) => {
     const { email } = input;

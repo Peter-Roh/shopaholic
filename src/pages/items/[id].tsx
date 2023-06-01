@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Layout from "@/components/Layout";
 import { useRouter } from "next/router";
-import { type RouterInputs, api } from "@/utils/api";
+import { type RouterInputs, api, type RouterOutputs } from "@/utils/api";
 import Image from "next/image";
 import DefaultUser from "../../../public/default_user.png";
 import useUser from "@/libs/client/useUser";
@@ -14,6 +14,9 @@ import Comment from "@/components/Comment";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { commentAddInput } from "@/server/api/schema";
+import InfiniteScroll from "react-infinite-scroll-component";
+
+type CommentsArray = RouterOutputs["comment"]["getByItem"]["comments"];
 
 interface ParsedUrlQueryForPage extends ParsedUrlQuery {
   id: string;
@@ -141,13 +144,42 @@ const ItemsDetail: NextPage = () => {
     reset: resetMutation,
   } = api.comment.add.useMutation();
 
-  const { data: comments, refetch: refetchComments } =
-    api.comment.getByItem.useQuery(
-      { itemId: parseInt(id) },
+  const [commentsData, setCommentsData] = useState<CommentsArray>([]);
+  const [page, setPage] = useState(0);
+
+  const { data: comments, fetchNextPage } =
+    api.comment.getByItem.useInfiniteQuery(
+      {
+        itemId: parseInt(id),
+        limit: 5,
+        skip: page,
+      },
       {
         enabled: id !== undefined,
+        onSuccess: (data) => {
+          setCommentsData((prev) => {
+            if (data) {
+              return [...prev, ...data.pages[0]!.comments];
+            }
+
+            return prev;
+          });
+        },
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
       }
     );
+
+  useEffect(() => {
+    setCommentsData([]);
+    setPage(0);
+  }, [id]);
+
+  const getMore = useCallback(() => {
+    setPage((p) => p + 1),
+      () => {
+        void fetchNextPage();
+      };
+  }, [fetchNextPage]);
 
   const onValid: SubmitHandler<FormValues> = async ({
     userId,
@@ -155,8 +187,10 @@ const ItemsDetail: NextPage = () => {
     comment,
   }) => {
     if (!isSuccess) {
-      await mutateAddAsync({ userId, itemId, comment }).then(() => {
-        void refetchComments();
+      await mutateAddAsync({ userId, itemId, comment }).then((data) => {
+        if (data) {
+          setCommentsData((prev) => [data, ...prev]);
+        }
       });
     }
   };
@@ -182,47 +216,54 @@ const ItemsDetail: NextPage = () => {
     async (commentId: number) => {
       if (!isDeleteLoading) {
         await mutateDeleteAsync({ userId: user.id, commentId }).then(() => {
-          void refetchComments();
+          setCommentsData((prev) => prev.filter((elt) => elt.id !== commentId));
         });
       }
     },
-    [mutateDeleteAsync, refetchComments, user?.id, isDeleteLoading]
+    [mutateDeleteAsync, user?.id, isDeleteLoading]
   );
 
   // like comment - optimistic update
   const { mutate: mutateLikeComment, isLoading: isLikeCommentLoading } =
     api.comment.toggleLike.useMutation({
       onMutate: async ({ commentId }) => {
-        await utils.comment.getByItem.cancel({ itemId: parseInt(id) });
+        await utils.comment.getByItem.cancel({
+          itemId: parseInt(id),
+          limit: 5,
+        });
         const prevData = utils.comment.getByItem.getData({
           itemId: parseInt(id),
+          limit: 5,
         });
-        utils.comment.getByItem.setData({ itemId: parseInt(id) }, (old) => {
-          if (old === undefined) {
-            return;
-          }
-
-          old.map((elt) => {
-            if (elt.id === commentId) {
-              if (elt.likes.length === 0) {
-                elt.likes.push({ userId: user.id });
-                elt._count.likes += 1;
-              } else {
-                elt.likes.shift();
-                elt._count.likes -= 1;
-              }
+        utils.comment.getByItem.setData(
+          { itemId: parseInt(id), limit: 5 },
+          (old) => {
+            if (old === undefined) {
+              return;
             }
-          });
 
-          return old;
-        });
+            old.comments.map((elt) => {
+              if (elt.id === commentId) {
+                if (elt.likes.length === 0) {
+                  elt.likes.push({ userId: user.id });
+                  elt._count.likes += 1;
+                } else {
+                  elt.likes.shift();
+                  elt._count.likes -= 1;
+                }
+              }
+            });
+
+            return old;
+          }
+        );
         return {
           prevData,
         };
       },
       onError: (err, newData, ctx) => {
         utils.comment.getByItem.setData(
-          { itemId: parseInt(id) },
+          { itemId: parseInt(id), limit: 5 },
           ctx?.prevData
         );
       },
@@ -452,23 +493,33 @@ const ItemsDetail: NextPage = () => {
           </div>
         </form>
         <div className="mb-8 mt-2 flex flex-col items-start justify-start space-y-4">
-          {comments?.map((comment) => {
-            return (
-              <Comment
-                key={comment.id}
-                id={comment.id}
-                comment={comment.comment}
-                isMine={comment.user.id === user?.id}
-                name={comment.user.name}
-                avatar={comment.user.avatar}
-                createdAt={comment.createdAt}
-                isLiked={comment.likes[0]?.userId === user?.id}
-                likes={comment._count.likes}
-                handleOnLike={onCommentLikeClick}
-                handleOnDelete={handleOnDelete}
-              />
-            );
-          })}
+          {comments && (
+            <InfiniteScroll
+              key={id}
+              dataLength={commentsData.length}
+              next={getMore}
+              hasMore={comments.pages[0]!.hasMore}
+              loader={<div className="flex-x-center">Loading...</div>}
+            >
+              {commentsData.map((comment) => {
+                return (
+                  <Comment
+                    key={comment.id}
+                    id={comment.id}
+                    comment={comment.comment}
+                    isMine={comment.user.id === user?.id}
+                    name={comment.user.name}
+                    avatar={comment.user.avatar}
+                    createdAt={comment.createdAt}
+                    isLiked={comment.likes[0]?.userId === user?.id}
+                    likes={comment._count.likes}
+                    handleOnLike={onCommentLikeClick}
+                    handleOnDelete={handleOnDelete}
+                  />
+                );
+              })}
+            </InfiniteScroll>
+          )}
         </div>
       </div>
     </Layout>
