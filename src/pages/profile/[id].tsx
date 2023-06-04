@@ -1,7 +1,6 @@
-import type { NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import Layout from "@/components/Layout";
 import { type RouterOutputs, api } from "@/utils/api";
-import type { ParsedUrlQuery } from "querystring";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import DefaultUser from "../../../public/default_user.png";
@@ -9,19 +8,16 @@ import Item from "@/components/Item";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useCallback, useState } from "react";
 import Loader from "@/components/Loader";
+import { withSessionSsr } from "@/libs/server/sessions";
+import { createHelpers } from "@/libs/server/helpers";
 
 type Unpacked<T> = T extends (infer U)[] ? U : T;
 type ItemsArray = Unpacked<
   Pick<RouterOutputs["users"]["getById"], "user">
 >["user"]["items"];
 
-interface ParsedUrlQueryForPage extends ParsedUrlQuery {
-  id: string;
-}
-
-const Profile: NextPage = () => {
+const Profile: NextPage<{ id: string }> = ({ id }) => {
   const router = useRouter();
-  const { id } = router.query as ParsedUrlQueryForPage;
   const [itemsData, setItemsData] = useState<ItemsArray>([]);
   const [page, setPage] = useState(0);
   const { data, fetchNextPage } = api.users.getById.useInfiniteQuery(
@@ -31,7 +27,6 @@ const Profile: NextPage = () => {
       skip: page,
     },
     {
-      enabled: id !== undefined,
       onSuccess: (data) => {
         setItemsData((prev) => {
           if (data) {
@@ -121,5 +116,25 @@ const Profile: NextPage = () => {
     </Layout>
   );
 };
+
+export const getServerSideProps = withSessionSsr(
+  async (context: GetServerSidePropsContext) => {
+    const id = context.params?.id as string;
+    const helpers = await createHelpers(context);
+
+    await helpers.users.getById.prefetchInfinite({
+      userId: parseInt(id),
+      limit: 20,
+      skip: 0,
+    });
+
+    return {
+      props: {
+        trpcState: helpers.dehydrate(),
+        id,
+      },
+    };
+  }
+);
 
 export default Profile;

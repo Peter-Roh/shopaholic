@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import Layout from "@/components/Layout";
 import { type RouterInputs, api } from "@/utils/api";
 import { useCallback, useEffect, useState } from "react";
@@ -12,6 +12,8 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import Modal from "@/components/Modal";
 import type { cloudflareUpload } from "@/types/cloudflare";
+import { withSessionSsr } from "@/libs/server/sessions";
+import { createHelpers } from "@/libs/server/helpers";
 
 type FormValues = RouterInputs["items"]["add"];
 
@@ -111,7 +113,7 @@ const Upload: NextPage = () => {
         form.append(
           "file",
           selectedFile,
-          data?.id.toString().concat("_").concat("item")
+          data.id.toString().concat("_").concat("item")
         );
         // upload file
         await fetch(uploadURL, {
@@ -369,5 +371,20 @@ const Upload: NextPage = () => {
     </Layout>
   );
 };
+
+export const getServerSideProps = withSessionSsr(
+  async (context: GetServerSidePropsContext) => {
+    const helpers = await createHelpers(context);
+
+    await helpers.users.me.prefetch(undefined);
+    await helpers.categories.getCategory.prefetch();
+
+    return {
+      props: {
+        trpcState: helpers.dehydrate(),
+      },
+    };
+  }
+);
 
 export default Upload;

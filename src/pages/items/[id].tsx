@@ -1,11 +1,10 @@
-import type { NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import Layout from "@/components/Layout";
 import { useRouter } from "next/router";
 import { type RouterInputs, api, type RouterOutputs } from "@/utils/api";
 import Image from "next/image";
 import DefaultUser from "../../../public/default_user.png";
 import useUser from "@/libs/client/useUser";
-import type { ParsedUrlQuery } from "querystring";
 import { type ChangeEvent, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { getPrice } from "@/utils/common";
@@ -16,19 +15,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { commentAddInput } from "@/server/api/schema";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Loader from "@/components/Loader";
+import { withSessionSsr } from "@/libs/server/sessions";
+import { createHelpers } from "@/libs/server/helpers";
 
 type CommentsArray = RouterOutputs["comment"]["getByItem"]["comments"];
-
-interface ParsedUrlQueryForPage extends ParsedUrlQuery {
-  id: string;
-}
-
 type FormValues = RouterInputs["comment"]["add"];
 
-const ItemsDetail: NextPage = () => {
+const ItemsDetail: NextPage<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const { data: user } = useUser();
-  const { id } = router.query as ParsedUrlQueryForPage;
   const [qty, setQty] = useState(1);
 
   const { mutateAsync, isLoading: isAddLoading } = api.cart.add.useMutation();
@@ -77,7 +72,7 @@ const ItemsDetail: NextPage = () => {
     if (!isLoading) {
       mutate({ userId: user.id, itemId: parseInt(id) });
     }
-  }, [id, mutate, user?.id, isLoading]);
+  }, [id, mutate, user.id, isLoading]);
 
   const onClickPlus = useCallback(() => {
     setQty((qty) => qty + 1);
@@ -221,7 +216,7 @@ const ItemsDetail: NextPage = () => {
         });
       }
     },
-    [mutateDeleteAsync, user?.id, isDeleteLoading]
+    [mutateDeleteAsync, user.id, isDeleteLoading]
   );
 
   // like comment - optimistic update
@@ -281,7 +276,7 @@ const ItemsDetail: NextPage = () => {
         mutateLikeComment({ userId: user.id, commentId });
       }
     },
-    [mutateLikeComment, user?.id, isLikeCommentLoading]
+    [mutateLikeComment, user.id, isLikeCommentLoading]
   );
 
   return (
@@ -508,11 +503,11 @@ const ItemsDetail: NextPage = () => {
                     key={comment.id}
                     id={comment.id}
                     comment={comment.comment}
-                    isMine={comment.user.id === user?.id}
+                    isMine={comment.user.id === user.id}
                     name={comment.user.name}
                     avatar={comment.user.avatar}
                     createdAt={comment.createdAt}
-                    isLiked={comment.likes[0]?.userId === user?.id}
+                    isLiked={comment.likes[0]?.userId === user.id}
                     likes={comment._count.likes}
                     handleOnLike={onCommentLikeClick}
                     handleOnDelete={handleOnDelete}
@@ -526,5 +521,24 @@ const ItemsDetail: NextPage = () => {
     </Layout>
   );
 };
+
+export const getServerSideProps = withSessionSsr(
+  async (context: GetServerSidePropsContext) => {
+    const id = context.params?.id as string;
+    const helpers = await createHelpers(context);
+
+    await helpers.users.me.prefetch(undefined);
+    await helpers.items.getById.prefetch({
+      itemId: parseInt(id),
+    });
+
+    return {
+      props: {
+        trpcState: helpers.dehydrate(),
+        id,
+      },
+    };
+  }
+);
 
 export default ItemsDetail;

@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import Layout from "@/components/Layout";
 import useUser from "@/libs/client/useUser";
 import { api, type RouterInputs } from "@/utils/api";
@@ -10,6 +10,8 @@ import Modal from "@/components/Modal";
 import Image from "next/image";
 import DefaultUser from "../../../public/default_user.png";
 import type { cloudflareUpload } from "@/types/cloudflare";
+import { withSessionSsr } from "@/libs/server/sessions";
+import { createHelpers } from "@/libs/server/helpers";
 
 type FormValues = RouterInputs["users"]["edit"];
 type FormDelete = RouterInputs["users"]["delete"];
@@ -73,7 +75,7 @@ const ProfileEdit: NextPage = () => {
       await cloudflareMutateAsync().then(async (res) => {
         const { uploadURL } = res.result;
         const form = new FormData();
-        form.append("file", selectedFile, data?.id.toString());
+        form.append("file", selectedFile, data.id.toString());
         // upload file
         await fetch(uploadURL, {
           method: "POST",
@@ -166,11 +168,11 @@ const ProfileEdit: NextPage = () => {
               </span>
               <input
                 {...register("name", {
-                  setValueAs: (v: string) => (v === "" ? data?.name : v),
+                  setValueAs: (v: string) => (v === "" ? data.name : v),
                 })}
                 type="text"
                 className="input mt-2"
-                placeholder={data?.name || ""}
+                placeholder={data.name || ""}
               />
             </div>
           </div>
@@ -190,7 +192,7 @@ const ProfileEdit: NextPage = () => {
                       sizes="80px"
                       fill
                     />
-                  ) : data?.avatar ? (
+                  ) : data.avatar ? (
                     <Image
                       alt="profile"
                       className="rounded-full"
@@ -281,5 +283,19 @@ const ProfileEdit: NextPage = () => {
     </Layout>
   );
 };
+
+export const getServerSideProps = withSessionSsr(
+  async (context: GetServerSidePropsContext) => {
+    const helpers = await createHelpers(context);
+
+    await helpers.users.me.prefetch(undefined);
+
+    return {
+      props: {
+        trpcState: helpers.dehydrate(),
+      },
+    };
+  }
+);
 
 export default ProfileEdit;
