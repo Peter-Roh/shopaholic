@@ -15,6 +15,7 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { commentAddInput } from "@/server/api/schema";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Loader from "@/components/Loader";
 
 type CommentsArray = RouterOutputs["comment"]["getByItem"]["comments"];
 
@@ -499,7 +500,7 @@ const ItemsDetail: NextPage = () => {
               dataLength={commentsData.length}
               next={getMore}
               hasMore={comments.pages[0]!.hasMore}
-              loader={<div className="flex-x-center">Loading...</div>}
+              loader={<Loader />}
             >
               {commentsData.map((comment) => {
                 return (

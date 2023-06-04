@@ -8,6 +8,7 @@ import type { RootState } from "@/store";
 import CarouselComponent from "@/components/Carousel";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useCallback, useEffect, useState } from "react";
+import Loader from "@/components/Loader";
 
 type ItemsArray = RouterOutputs["items"]["getMany"];
 
@@ -68,7 +69,7 @@ const Home: NextPage = () => {
                 dataLength={data.length}
                 next={getMore}
                 hasMore={hasMore}
-                loader={<div className="flex-x-center">Loading...</div>}
+                loader={<Loader />}
               >
                 {data.map((item) => {
                   return (

@@ -1,5 +1,6 @@
 import Item from "@/components/Item";
 import Layout from "@/components/Layout";
+import Loader from "@/components/Loader";
 import { type RouterOutputs, api } from "@/utils/api";
 import type { NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
@@ -51,7 +52,7 @@ const WatchList: NextPage = () => {
             dataLength={data.length}
             next={getMore}
             hasMore={hasMore}
-            loader={<div className="flex-x-center">Loading...</div>}
+            loader={<Loader />}
             pullDownToRefresh={true}
             refreshFunction={getMore}
           >

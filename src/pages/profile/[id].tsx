@@ -8,6 +8,7 @@ import DefaultUser from "../../../public/default_user.png";
 import Item from "@/components/Item";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useCallback, useState } from "react";
+import Loader from "@/components/Loader";
 
 type Unpacked<T> = T extends (infer U)[] ? U : T;
 type ItemsArray = Unpacked<
@@ -96,7 +97,7 @@ const Profile: NextPage = () => {
                 dataLength={itemsData.length}
                 next={getMore}
                 hasMore={data.pages[0]!.hasMore}
-                loader={<div className="flex-x-center">Loading...</div>}
+                loader={<Loader />}
               >
                 {itemsData.map((item) => {
                   return (

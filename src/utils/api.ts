@@ -45,7 +45,7 @@ export const api = createTRPCNext<AppRouter>({
     };
   },
 
-  ssr: false,
+  ssr: false, // use server side helpers to prefetch queries in getStaticProps or getServerSideProps
 });
 
 /**

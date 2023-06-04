@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import Layout from "@/components/Layout";
 import useUser from "@/libs/client/useUser";
 import Link from "next/link";
@@ -6,6 +6,8 @@ import Footer from "@/components/Footer";
 import Image from "next/image";
 import DefaultUser from "../../../public/default_user.png";
 import { useMemo } from "react";
+import { withSessionSsr } from "@/libs/server/sessions";
+import { createHelpers } from "@/libs/server/helpers";
 
 type Option = {
   link: string;
@@ -142,7 +144,7 @@ const MyPage: NextPage = () => {
         <div className="mt-8 rounded-md bg-white px-4 py-4 shadow-md dark:bg-gray-700 lg:mx-auto lg:w-3/5">
           <div className="flex items-center space-x-3 lg:mx-auto lg:w-11/12">
             <div className="relative h-20 w-20 rounded-full">
-              {data?.avatar ? (
+              {data.avatar ? (
                 <Image
                   alt="profile"
                   className="rounded-full"
@@ -164,9 +166,9 @@ const MyPage: NextPage = () => {
             <div className="flex flex-col">
               <div className="flex flex-col">
                 <span className="text-xl font-semibold text-gray-900 dark:text-slate-100">
-                  {data?.name}
+                  {data.name}
                 </span>
-                <span className="text-xs text-gray-500">{data?.email}</span>
+                <span className="text-xs text-gray-500">{data.email}</span>
               </div>
               <Link href="/profile/edit">
                 <span className="text-xs font-semibold text-gray-700 dark:text-slate-200">
@@ -213,5 +215,19 @@ const MyPage: NextPage = () => {
     </Layout>
   );
 };
+
+export const getServerSideProps = withSessionSsr(
+  async (context: GetServerSidePropsContext) => {
+    const helpers = await createHelpers(context);
+
+    await helpers.users.me.prefetch(undefined);
+
+    return {
+      props: {
+        trpcState: helpers.dehydrate(),
+      },
+    };
+  }
+);
 
 export default MyPage;

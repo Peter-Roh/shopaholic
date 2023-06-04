@@ -15,6 +15,15 @@ import { ratelimit } from "@/server/ratelimiter";
 
 export const usersRouter = createTRPCRouter({
   me: privateProcedure.query(async ({ ctx }) => {
+    const { success } = await ratelimit.limit(ctx.userId.toString());
+
+    if (!success) {
+      throw new TRPCError({
+        code: "TOO_MANY_REQUESTS",
+        message: "Too many requests have been made.",
+      });
+    }
+
     const profile = await ctx.prisma.user.findUnique({
       where: {
         id: ctx.userId,
