@@ -227,48 +227,21 @@ const ItemsDetail: NextPage<{ id: string; userId: number | undefined }> = ({
   const { mutate: mutateLikeComment, isLoading: isLikeCommentLoading } =
     api.comment.toggleLike.useMutation({
       onMutate: async ({ commentId }) => {
-        await utils.comment.getByItem.cancel({
-          itemId: parseInt(id),
-          limit: 20,
-        });
-        const prevData = utils.comment.getByItem.getData({
-          itemId: parseInt(id),
-          limit: 20,
-        });
-        utils.comment.getByItem.setData(
-          { itemId: parseInt(id), limit: 20 },
-          (old) => {
-            if (old === undefined) {
-              return;
+        await utils.comment.getByItem.cancel();
+
+        commentsData.map((elt) => {
+          if (elt.id === commentId) {
+            if (elt.likes.length === 0 && userId) {
+              elt.likes.push({ userId });
+              elt._count.likes += 1;
+            } else {
+              elt.likes.shift();
+              elt._count.likes -= 1;
             }
-            old.comments.map((elt) => {
-              if (elt.id === commentId) {
-                if (elt.likes.length === 0 && userId) {
-                  elt.likes.push({ userId });
-                  elt._count.likes += 1;
-                } else {
-                  elt.likes.shift();
-                  elt._count.likes -= 1;
-                }
-              }
-            });
-            return old;
           }
-        );
-        return {
-          prevData,
-        };
-      },
-      onError: (err, newData, ctx) => {
-        utils.comment.getByItem.setData(
-          { itemId: parseInt(id), limit: 20 },
-          ctx?.prevData
-        );
-      },
-      onSettled: () => {
-        void utils.comment.getByItem.invalidate({
-          itemId: parseInt(id),
         });
+
+        return { commentsData };
       },
     });
 
@@ -498,6 +471,7 @@ const ItemsDetail: NextPage<{ id: string; userId: number | undefined }> = ({
               next={getMore}
               hasMore={comments.pages[0]!.hasMore}
               loader={<Loader />}
+              scrollThreshold={0.5}
             >
               {commentsData.map((comment) => {
                 return (
