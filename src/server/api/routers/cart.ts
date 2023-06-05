@@ -43,7 +43,7 @@ export const cartRouter = createTRPCRouter({
       });
       return cartItem;
     } else {
-      if (items.length >= 5) {
+      if (items.length > 20) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Cart is full",

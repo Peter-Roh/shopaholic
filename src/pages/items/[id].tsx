@@ -16,6 +16,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import Loader from "@/components/Loader";
 import { withSessionSsr } from "@/libs/server/sessions";
 import { createHelpers } from "@/libs/server/helpers";
+import type { TRPCError } from "@trpc/server";
 
 type CommentsArray = RouterOutputs["comment"]["getByItem"]["comments"];
 type FormValues = RouterInputs["comment"]["add"];
@@ -85,9 +86,13 @@ const ItemsDetail: NextPage<{ id: string; userId: number | undefined }> = ({
 
   const handleAddCart = async () => {
     if (!isAddLoading && userId) {
-      await mutateAsync({ userId, itemId: parseInt(id), qty }).then(() => {
-        toast.success("item was added to your cart!");
-      });
+      await mutateAsync({ userId, itemId: parseInt(id), qty })
+        .then(() => {
+          toast.success("item was added to your cart!");
+        })
+        .catch((err: TRPCError) => {
+          toast.error(err.message);
+        });
     }
   };
 
@@ -236,7 +241,6 @@ const ItemsDetail: NextPage<{ id: string; userId: number | undefined }> = ({
             if (old === undefined) {
               return;
             }
-
             old.comments.map((elt) => {
               if (elt.id === commentId) {
                 if (elt.likes.length === 0 && userId) {
@@ -248,7 +252,6 @@ const ItemsDetail: NextPage<{ id: string; userId: number | undefined }> = ({
                 }
               }
             });
-
             return old;
           }
         );
