@@ -120,7 +120,7 @@ const Profile: NextPage<{ id: string }> = ({ id }) => {
 export const getServerSideProps = withSessionSsr(
   async (context: GetServerSidePropsContext) => {
     const id = context.params?.id as string;
-    const helpers = await createHelpers(context);
+    const { helpers } = await createHelpers(context);
 
     await helpers.users.getById.prefetchInfinite({
       userId: parseInt(id),

@@ -16,7 +16,7 @@ const Home: NextPage = () => {
   const { categoryId, subcategoryId } = useSelector(
     (state: RootState) => state.category
   );
-  const [data, setData] = useState<ItemsArray>([]);
+  const [data, setData] = useState<ItemsArray>();
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const { mutateAsync } = api.items.getMany.useMutation();
@@ -44,7 +44,7 @@ const Home: NextPage = () => {
       subcategoryId,
       page,
     }).then((items) => {
-      setData((prev) => [...prev, ...items]);
+      setData((prev) => [...(prev ?? []), ...items]);
       setPage((p) => p + 1);
       if (items.length < 5) {
         setHasMore(false);
@@ -57,36 +57,40 @@ const Home: NextPage = () => {
       <div className="mt-14 flex w-full flex-col justify-start lg:mx-auto lg:w-3/5">
         <CarouselComponent />
         <div className="mt-4 flex flex-col space-y-2 divide-y">
-          {data && data.length === 0 ? (
-            <>
-              <div className="flex-y-center mt-2 text-gray-600">
-                Item not found.
-              </div>
-            </>
+          {data ? (
+            data.length === 0 ? (
+              <>
+                <div className="flex-y-center mt-2 text-gray-600">
+                  Item not found.
+                </div>
+              </>
+            ) : (
+              <>
+                <InfiniteScroll
+                  dataLength={data.length}
+                  next={getMore}
+                  hasMore={hasMore}
+                  loader={<Loader />}
+                >
+                  {data.map((item) => {
+                    return (
+                      <Item
+                        key={item.id}
+                        id={item.id}
+                        name={item.name}
+                        description={item.description}
+                        price={item.price}
+                        image={item.image}
+                        favs={item._count.favs}
+                        comments={item._count.comments}
+                      />
+                    );
+                  })}
+                </InfiniteScroll>
+              </>
+            )
           ) : (
-            <>
-              <InfiniteScroll
-                dataLength={data.length}
-                next={getMore}
-                hasMore={hasMore}
-                loader={<Loader />}
-              >
-                {data.map((item) => {
-                  return (
-                    <Item
-                      key={item.id}
-                      id={item.id}
-                      name={item.name}
-                      description={item.description}
-                      price={item.price}
-                      image={item.image}
-                      favs={item._count.favs}
-                      comments={item._count.comments}
-                    />
-                  );
-                })}
-              </InfiniteScroll>
-            </>
+            <Loader />
           )}
         </div>
       </div>

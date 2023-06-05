@@ -9,7 +9,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 type Watchlist = NonNullable<RouterOutputs["favorite"]["watchlist"]>["favs"];
 
 const WatchList: NextPage = () => {
-  const [data, setData] = useState<Watchlist>([]);
+  const [data, setData] = useState<Watchlist>();
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const { mutateAsync } = api.favorite.watchlist.useMutation();
@@ -28,7 +28,7 @@ const WatchList: NextPage = () => {
         page,
       }).then((res) => {
         if (res) {
-          setData((prev) => [...prev, ...res.favs]);
+          setData((prev) => [...(prev ?? []), ...res.favs]);
           if (res.favs.length < 5) {
             setHasMore(false);
           }
@@ -41,36 +41,40 @@ const WatchList: NextPage = () => {
   return (
     <Layout title="Watchlist" canGoBack>
       <div className="flex min-h-screen w-full flex-col space-y-2 divide-y lg:mx-auto lg:w-3/5">
-        {data.length === 0 ? (
-          <>
-            <div className="flex-y-center mt-2 text-gray-600">
-              Item not found.
-            </div>
-          </>
+        {data ? (
+          data.length === 0 ? (
+            <>
+              <div className="flex-y-center mt-2 text-gray-600">
+                Item not found.
+              </div>
+            </>
+          ) : (
+            <InfiniteScroll
+              dataLength={data.length}
+              next={getMore}
+              hasMore={hasMore}
+              loader={<Loader />}
+              pullDownToRefresh={true}
+              refreshFunction={getMore}
+            >
+              {data.map((item) => {
+                return (
+                  <Item
+                    key={item.item.id}
+                    id={item.item.id}
+                    name={item.item.name}
+                    description={item.item.description}
+                    price={item.item.price}
+                    image={item.item.image}
+                    favs={item.item._count.favs}
+                    comments={item.item._count.comments}
+                  />
+                );
+              })}
+            </InfiniteScroll>
+          )
         ) : (
-          <InfiniteScroll
-            dataLength={data.length}
-            next={getMore}
-            hasMore={hasMore}
-            loader={<Loader />}
-            pullDownToRefresh={true}
-            refreshFunction={getMore}
-          >
-            {data.map((item) => {
-              return (
-                <Item
-                  key={item.item.id}
-                  id={item.item.id}
-                  name={item.item.name}
-                  description={item.item.description}
-                  price={item.item.price}
-                  image={item.item.image}
-                  favs={item.item._count.favs}
-                  comments={item.item._count.comments}
-                />
-              );
-            })}
-          </InfiniteScroll>
+          <Loader />
         )}
       </div>
     </Layout>

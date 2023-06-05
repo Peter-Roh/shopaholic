@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { type RouterInputs, api, type RouterOutputs } from "@/utils/api";
 import Image from "next/image";
 import DefaultUser from "../../../public/default_user.png";
-import useUser from "@/libs/client/useUser";
 import { type ChangeEvent, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { getPrice } from "@/utils/common";
@@ -21,9 +20,11 @@ import { createHelpers } from "@/libs/server/helpers";
 type CommentsArray = RouterOutputs["comment"]["getByItem"]["comments"];
 type FormValues = RouterInputs["comment"]["add"];
 
-const ItemsDetail: NextPage<{ id: string }> = ({ id }) => {
+const ItemsDetail: NextPage<{ id: string; userId: number | undefined }> = ({
+  id,
+  userId,
+}) => {
   const router = useRouter();
-  const { data: user } = useUser();
   const [qty, setQty] = useState(1);
 
   const { mutateAsync, isLoading: isAddLoading } = api.cart.add.useMutation();
@@ -69,10 +70,10 @@ const ItemsDetail: NextPage<{ id: string }> = ({ id }) => {
   });
 
   const onLikeClick = useCallback(() => {
-    if (!isLoading) {
-      mutate({ userId: user.id, itemId: parseInt(id) });
+    if (!isLoading && userId) {
+      mutate({ userId, itemId: parseInt(id) });
     }
-  }, [id, mutate, user.id, isLoading]);
+  }, [id, userId, mutate, isLoading]);
 
   const onClickPlus = useCallback(() => {
     setQty((qty) => qty + 1);
@@ -83,12 +84,10 @@ const ItemsDetail: NextPage<{ id: string }> = ({ id }) => {
   }, []);
 
   const handleAddCart = async () => {
-    if (!isAddLoading) {
-      await mutateAsync({ userId: user.id, itemId: parseInt(id), qty }).then(
-        () => {
-          toast.success("item was added to your cart!");
-        }
-      );
+    if (!isAddLoading && userId) {
+      await mutateAsync({ userId, itemId: parseInt(id), qty }).then(() => {
+        toast.success("item was added to your cart!");
+      });
     }
   };
 
@@ -116,14 +115,14 @@ const ItemsDetail: NextPage<{ id: string }> = ({ id }) => {
   }, [register]);
 
   useEffect(() => {
-    if (user) {
-      setValue("userId", user.id);
+    if (userId) {
+      setValue("userId", userId);
     }
 
     if (id) {
       setValue("itemId", parseInt(id));
     }
-  }, [setValue, user, id]);
+  }, [setValue, userId, id]);
 
   // textarea auto resize
   const textareaOnChange = useCallback(
@@ -210,13 +209,13 @@ const ItemsDetail: NextPage<{ id: string }> = ({ id }) => {
   // delete comment
   const handleOnDelete = useCallback(
     async (commentId: number) => {
-      if (!isDeleteLoading) {
-        await mutateDeleteAsync({ userId: user.id, commentId }).then(() => {
+      if (!isDeleteLoading && userId) {
+        await mutateDeleteAsync({ userId, commentId }).then(() => {
           setCommentsData((prev) => prev.filter((elt) => elt.id !== commentId));
         });
       }
     },
-    [mutateDeleteAsync, user.id, isDeleteLoading]
+    [mutateDeleteAsync, userId, isDeleteLoading]
   );
 
   // like comment - optimistic update
@@ -240,8 +239,8 @@ const ItemsDetail: NextPage<{ id: string }> = ({ id }) => {
 
             old.comments.map((elt) => {
               if (elt.id === commentId) {
-                if (elt.likes.length === 0) {
-                  elt.likes.push({ userId: user.id });
+                if (elt.likes.length === 0 && userId) {
+                  elt.likes.push({ userId });
                   elt._count.likes += 1;
                 } else {
                   elt.likes.shift();
@@ -272,11 +271,11 @@ const ItemsDetail: NextPage<{ id: string }> = ({ id }) => {
 
   const onCommentLikeClick = useCallback(
     (commentId: number) => {
-      if (!isLikeCommentLoading) {
-        mutateLikeComment({ userId: user.id, commentId });
+      if (!isLikeCommentLoading && userId) {
+        mutateLikeComment({ userId, commentId });
       }
     },
-    [mutateLikeComment, user.id, isLikeCommentLoading]
+    [mutateLikeComment, userId, isLikeCommentLoading]
   );
 
   return (
@@ -503,11 +502,11 @@ const ItemsDetail: NextPage<{ id: string }> = ({ id }) => {
                     key={comment.id}
                     id={comment.id}
                     comment={comment.comment}
-                    isMine={comment.user.id === user.id}
+                    isMine={comment.user.id === userId}
                     name={comment.user.name}
                     avatar={comment.user.avatar}
                     createdAt={comment.createdAt}
-                    isLiked={comment.likes[0]?.userId === user.id}
+                    isLiked={comment.likes[0]?.userId === userId}
                     likes={comment._count.likes}
                     handleOnLike={onCommentLikeClick}
                     handleOnDelete={handleOnDelete}
@@ -525,9 +524,8 @@ const ItemsDetail: NextPage<{ id: string }> = ({ id }) => {
 export const getServerSideProps = withSessionSsr(
   async (context: GetServerSidePropsContext) => {
     const id = context.params?.id as string;
-    const helpers = await createHelpers(context);
+    const { helpers, userId } = await createHelpers(context);
 
-    await helpers.users.me.prefetch(undefined);
     await helpers.items.getById.prefetch({
       itemId: parseInt(id),
     });
@@ -536,6 +534,7 @@ export const getServerSideProps = withSessionSsr(
       props: {
         trpcState: helpers.dehydrate(),
         id,
+        userId,
       },
     };
   }

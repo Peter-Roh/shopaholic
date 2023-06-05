@@ -1,8 +1,10 @@
 import CartItem from "@/components/CartItem";
 import Layout from "@/components/Layout";
+import { createHelpers } from "@/libs/server/helpers";
+import { withSessionSsr } from "@/libs/server/sessions";
 import { api } from "@/utils/api";
 import { getPrice } from "@/utils/common";
-import type { NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import React, { useCallback, useMemo } from "react";
 import { toast } from "react-hot-toast";
 
@@ -24,7 +26,6 @@ const Cart: NextPage = () => {
     async (e: React.BaseSyntheticEvent, id: number) => {
       e.preventDefault();
       await mutateAsync({ cartItemId: id }).then(() => {
-        // ? should I use optimistic update here?
         void refetch();
         toast.success("The item was deleted from your cart!");
       });
@@ -71,5 +72,19 @@ const Cart: NextPage = () => {
     </Layout>
   );
 };
+
+export const getServerSideProps = withSessionSsr(
+  async (context: GetServerSidePropsContext) => {
+    const { helpers } = await createHelpers(context);
+
+    await helpers.cart.getMyCart.prefetch();
+
+    return {
+      props: {
+        trpcState: helpers.dehydrate(),
+      },
+    };
+  }
+);
 
 export default Cart;

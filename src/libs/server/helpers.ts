@@ -24,5 +24,8 @@ export const createHelpers = async (context: GetServerSidePropsContext) => {
     transformer: superjson,
   });
 
-  return helpers;
+  return {
+    helpers,
+    userId: session.user?.id,
+  };
 };

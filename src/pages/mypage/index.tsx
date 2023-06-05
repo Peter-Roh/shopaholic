@@ -218,7 +218,7 @@ const MyPage: NextPage = () => {
 
 export const getServerSideProps = withSessionSsr(
   async (context: GetServerSidePropsContext) => {
-    const helpers = await createHelpers(context);
+    const { helpers } = await createHelpers(context);
 
     await helpers.users.me.prefetch(undefined);
 
