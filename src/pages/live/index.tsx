@@ -1,23 +1,71 @@
 import type { NextPage } from "next";
 import Layout from "@/components/Layout";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { type RouterOutputs, api } from "@/utils/api";
+import Loader from "@/components/Loader";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Stream from "@/components/Stream";
+
+type StreamArray = RouterOutputs["stream"]["getMany"];
 
 const Live: NextPage = () => {
+  const [page, setPage] = useState(1);
+  const [data, setData] = useState<StreamArray>();
+  const [hasMore, setHasMore] = useState(true);
+  const { mutateAsync } = api.stream.getMany.useMutation();
+
+  const getMore = useCallback(() => {
+    void mutateAsync({ page }).then((streams) => {
+      setData((prev) => [...(prev ?? []), ...streams]);
+      setPage((p) => p + 1);
+      if (streams.length < 20) {
+        setHasMore(false);
+      }
+    });
+  }, [mutateAsync, page]);
+
+  useEffect(() => {
+    void mutateAsync({ page: 0 }).then((streams) => {
+      setData(streams);
+    });
+  }, [mutateAsync]);
+
   return (
     <Layout title="Live" hasTabBar canGoBack>
       <div className="flex flex-col space-y-2 divide-y lg:mx-auto lg:w-3/5">
-        {[1, 1, 1, 1, 1].map((_, i) => (
-          <Link key={i} href="/live/1">
-            <div className="pt-2">
-              <div className="aspect-video w-full bg-slate-300" />
-              <p className="mt-2 text-lg font-medium text-gray-700">
-                Live streaming!
-              </p>
-            </div>
-          </Link>
-        ))}
+        {data ? (
+          data.length === 0 ? (
+            <>
+              <div className="flex-y-center mt-2 text-gray-600">
+                Item not found.
+              </div>
+            </>
+          ) : (
+            <InfiniteScroll
+              dataLength={data.length}
+              next={getMore}
+              hasMore={hasMore}
+              loader={<Loader />}
+            >
+              {data.map((stream) => {
+                return (
+                  <Stream
+                    key={stream.id}
+                    id={stream.id}
+                    title={stream.title}
+                    name={stream.user.name}
+                    avatar={stream.user.avatar}
+                  />
+                );
+              })}
+            </InfiniteScroll>
+          )
+        ) : (
+          <Loader />
+        )}
       </div>
-      <Link href="/">
+      <Link href="/stream/create">
         <button className="fixed bottom-28 right-6 z-10 cursor-pointer rounded-full border-transparent bg-cyan-400 p-3 text-white shadow-xl transition-colors hover:bg-cyan-500 lg:hidden">
           <svg
             className="icon"

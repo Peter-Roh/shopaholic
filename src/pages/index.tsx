@@ -46,7 +46,7 @@ const Home: NextPage = () => {
     }).then((items) => {
       setData((prev) => [...(prev ?? []), ...items]);
       setPage((p) => p + 1);
-      if (items.length < 5) {
+      if (items.length < 20) {
         setHasMore(false);
       }
     });

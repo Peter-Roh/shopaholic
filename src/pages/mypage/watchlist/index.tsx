@@ -29,7 +29,7 @@ const WatchList: NextPage = () => {
       }).then((res) => {
         if (res) {
           setData((prev) => [...(prev ?? []), ...res.favs]);
-          if (res.favs.length < 5) {
+          if (res.favs.length < 20) {
             setHasMore(false);
           }
         }

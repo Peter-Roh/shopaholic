@@ -14,6 +14,7 @@ const server = z.object({
   CLOUDFLARE_TOKEN: z.string(),
   GITHUB_ID: z.string(),
   GITHUB_SECRET: z.string(),
+  CLOUDFLARE_STREAM_TOKEN: z.string(),
 });
 
 /**
@@ -28,6 +29,7 @@ const client = z.object({
   NEXT_PUBLIC_GOOGLE_SECRET: z.string(),
   NEXT_PUBLIC_GOOGLE_REDIRECT_URI: z.string().url(),
   NEXT_PUBLIC_GITHUB_ID: z.string(),
+  NEXT_PUBLIC_CLOUDFLARE_CODE: z.string(),
 });
 
 /**
@@ -47,6 +49,7 @@ const processEnv = {
   CLOUDFLARE_TOKEN: process.env.CLOUDFLARE_TOKEN,
   GITHUB_ID: process.env.GITHUB_ID,
   GITHUB_SECRET: process.env.GITHUB_SECRET,
+  CLOUDFLARE_STREAM_TOKEN: process.env.CLOUDFLARE_STREAM_TOKEN,
   NEXT_PUBLIC_EMAILJS_SERVICE_ID: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
   NEXT_PUBLIC_EMAILJS_TEMPLATE_ID: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
   NEXT_PUBLIC_EMAILJS_PUBLIC_KEY: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
@@ -54,6 +57,7 @@ const processEnv = {
   NEXT_PUBLIC_GOOGLE_SECRET: process.env.NEXT_PUBLIC_GOOGLE_SECRET,
   NEXT_PUBLIC_GOOGLE_REDIRECT_URI: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
   NEXT_PUBLIC_GITHUB_ID: process.env.NEXT_PUBLIC_GITHUB_ID,
+  NEXT_PUBLIC_CLOUDFLARE_CODE: process.env.NEXT_PUBLIC_CLOUDFLARE_CODE,
 };
 
 const merged = server.merge(client);

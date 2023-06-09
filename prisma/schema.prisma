@@ -20,10 +20,12 @@ model User {
   tokens       Token[]
   favs         Fav[]
   cart         CartItem[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
   comments     Comment[]
   commentLikes CommentLike[]
+  streams      Stream[]
+  messages     Message[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model Token {
@@ -130,4 +132,34 @@ model CommentLike {
 
   @@index([userId])
   @@index([commentId])
+}
+
+model Stream {
+  id            Int       @id @default(autoincrement())
+  title         String
+  description   String    @db.MediumText
+  messages      Message[]
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int
+  cloudflareId  String
+  cloudflareUrl String
+  cloudflareKey String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  message   String   @db.MediumText
+  stream    Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  streamId  Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([streamId])
 }

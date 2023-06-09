@@ -110,3 +110,18 @@ export const authGithubInput = z.object({
 export const watchlistInput = z.object({
   page: z.number().int(),
 });
+
+export const streamCreateInput = z.object({
+  title: z.string(),
+  description: z.string(),
+  userId: z.number().int().nonnegative(),
+});
+
+export const getStreamByIdInput = z.object({
+  id: z.number().int().nonnegative(),
+  userId: z.number().int().nonnegative(),
+});
+
+export const streamGetManyInput = z.object({
+  page: z.number().int(),
+});

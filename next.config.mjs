@@ -10,7 +10,10 @@
 const config = {
   reactStrictMode: true,
   images: {
-    domains: ["imagedelivery.net"],
+    domains: [
+      "imagedelivery.net",
+      `customer-${process.env.NEXT_PUBLIC_CLOUDFLARE_CODE}.cloudflarestream.com`,
+    ],
   },
 
   /**
