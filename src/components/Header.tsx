@@ -182,6 +182,11 @@ const Header: NextPage<HeaderProps> = ({ title, canGoBack, router }) => {
                     Upload Item
                   </div>
                 </Link>
+                <Link href="/stream/create">
+                  <div className="flex-x-center whitespace-nowrap py-2 px-4 font-medium hover:bg-slate-200 dark:text-slate-100 dark:hover:bg-slate-600">
+                    Start Streaming
+                  </div>
+                </Link>
                 <Link href="/mypage">
                   <div className="flex-x-center whitespace-nowrap py-2 px-4 font-medium hover:bg-slate-200 dark:text-slate-100 dark:hover:bg-slate-600">
                     My Page

@@ -144,6 +144,8 @@ model Stream {
   cloudflareId  String
   cloudflareUrl String
   cloudflareKey String
+  videoUid      String
+  thumbnail     String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

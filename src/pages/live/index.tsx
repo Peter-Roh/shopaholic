@@ -38,7 +38,7 @@ const Live: NextPage = () => {
           data.length === 0 ? (
             <>
               <div className="flex-y-center mt-2 text-gray-600">
-                Item not found.
+                Live streaming not found.
               </div>
             </>
           ) : (
@@ -56,6 +56,7 @@ const Live: NextPage = () => {
                     title={stream.title}
                     name={stream.user.name}
                     avatar={stream.user.avatar}
+                    thumbnail={stream.thumbnail}
                   />
                 );
               })}

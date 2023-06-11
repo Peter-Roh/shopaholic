@@ -125,3 +125,16 @@ export const getStreamByIdInput = z.object({
 export const streamGetManyInput = z.object({
   page: z.number().int(),
 });
+
+export const watchStreamingInput = z.object({
+  uid: z.string(),
+});
+
+export const startStreamingInput = z.object({
+  id: z.number().int().nonnegative(),
+  videoUid: z.string(),
+});
+
+export const deleteStreamInput = z.object({
+  id: z.number().int().nonnegative(),
+});

@@ -10,14 +10,14 @@ import { useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 
-type FormValues = RouterInputs["stream"]["create"];
+type FormValues = RouterInputs["stream"]["ready"];
 
 const StreamCreate: NextPage = () => {
   const { data } = useUser();
   const router = useRouter();
   const [loadingModalOpen, setLoadingModalOpen] = useState(false);
   const { register, handleSubmit, setValue } = useForm<FormValues>();
-  const { mutateAsync, isSuccess } = api.stream.create.useMutation();
+  const { mutateAsync, isSuccess } = api.stream.ready.useMutation();
 
   const onValid: SubmitHandler<FormValues> = async ({
     title,

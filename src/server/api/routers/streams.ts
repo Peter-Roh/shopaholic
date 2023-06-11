@@ -3,11 +3,19 @@ import {
   streamCreateInput,
   streamGetManyInput,
   getStreamByIdInput,
+  deleteStreamInput,
+  startStreamingInput,
+  watchStreamingInput,
 } from "../schema";
-import type { cloudflareStream } from "@/types/cloudflare";
+import type {
+  cloudflareStream,
+  cloudflareWatchStream,
+} from "@/types/cloudflare";
+import { ratelimit } from "@/server/ratelimiter";
+import { TRPCError } from "@trpc/server";
 
 export const streamRouter = createTRPCRouter({
-  create: privateProcedure
+  ready: privateProcedure
     .input(streamCreateInput)
     .mutation(async ({ ctx, input }) => {
       const { title, description, userId } = input;
@@ -35,6 +43,8 @@ export const streamRouter = createTRPCRouter({
         data: {
           title,
           description,
+          videoUid: "",
+          thumbnail: "",
           user: {
             connect: {
               id: userId,
@@ -49,6 +59,57 @@ export const streamRouter = createTRPCRouter({
       return {
         id: newStream.id,
       };
+    }),
+  watch: privateProcedure
+    .input(watchStreamingInput)
+    .query(async ({ input }) => {
+      const { uid } = input;
+
+      const { videoUID, live } = (await (
+        await fetch(
+          `https://customer-${process.env
+            .CLOUDFLARE_CODE!}.cloudflarestream.com/${uid}/lifecycle
+        `,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${process.env.CLOUDFLARE_STREAM_TOKEN!}`,
+            },
+          }
+        )
+      ).json()) as cloudflareWatchStream;
+
+      return {
+        live,
+        videoUID,
+      };
+    }),
+  start: privateProcedure
+    .input(startStreamingInput)
+    .mutation(async ({ ctx, input }) => {
+      const { id, videoUid } = input;
+
+      await ctx.prisma.stream.update({
+        where: {
+          id,
+        },
+        data: {
+          videoUid,
+          thumbnail: `https://customer-${process.env
+            .CLOUDFLARE_CODE!}.cloudflarestream.com/${videoUid}/thumbnails/thumbnail.jpg`,
+        },
+      });
+    }),
+  delete: privateProcedure
+    .input(deleteStreamInput)
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input;
+
+      await ctx.prisma.stream.delete({
+        where: {
+          id,
+        },
+      });
     }),
   getMany: privateProcedure
     .input(streamGetManyInput)
@@ -74,6 +135,15 @@ export const streamRouter = createTRPCRouter({
     .input(getStreamByIdInput)
     .query(async ({ ctx, input }) => {
       const { id, userId } = input;
+
+      const { success } = await ratelimit.limit(userId.toString());
+
+      if (!success) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Too many requests have been made.",
+        });
+      }
 
       const stream = await ctx.prisma.stream.findUnique({
         where: {

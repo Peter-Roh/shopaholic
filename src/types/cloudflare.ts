@@ -28,3 +28,28 @@ export type cloudflareStream = {
     allowedOrigins: number | null;
   };
 };
+
+export type cloudflareWatchStream = {
+  status: string;
+  live: boolean;
+  videoUID: string | null;
+  isInput: boolean;
+};
+
+export type cloudflareLiveStream = {
+  uid: string;
+  thumbnail: string;
+  readyToStream: boolean;
+  status: {
+    state: string;
+    errorReasonCode: string;
+    errorReasonText: string;
+  };
+  meta: {
+    name: string;
+  };
+  created: string;
+  modified: string;
+  size: number;
+  preview: string;
+};

@@ -7,22 +7,31 @@ import DefaultUser from "../../public/default_user.png";
 
 type Stream = NonNullable<Unpacked<RouterOutputs["stream"]["getMany"]>>;
 type StreamProps = Prettify<
-  Pick<Stream, "id" | "title"> & Pick<Stream, "user">["user"]
+  Pick<Stream, "id" | "title" | "thumbnail"> & Pick<Stream, "user">["user"]
 >;
 
-const Stream: NextPage<StreamProps> = ({ id, title, name, avatar }) => {
+const Stream: NextPage<StreamProps> = ({
+  id,
+  title,
+  name,
+  avatar,
+  thumbnail,
+}) => {
   return (
     <Link href={`/live/${id}`}>
       <div className="pt-2">
-        <div className="aspect-video w-full">
-          <Image
-            alt="thumbnail"
-            src={`https://customer-${process.env
-              .NEXT_PUBLIC_CLOUDFLARE_CODE!}.cloudflarestream.com/${id}/thumbnails/thumbnail.jpg?fit=fill`}
-            fill={true}
-            className=""
-          />
-        </div>
+        {thumbnail === "" ? (
+          <div className="aspect-video w-full rounded-md bg-slate-400" />
+        ) : (
+          <div className="relative aspect-video w-full">
+            <Image
+              alt="thumbnail"
+              src={thumbnail}
+              fill={true}
+              className="rounded-md"
+            />
+          </div>
+        )}
         <div className="mt-2 flex items-center justify-between">
           <p className="text-lg font-medium text-gray-700">{title}</p>
           <div className="flex items-center">
