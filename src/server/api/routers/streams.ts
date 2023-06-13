@@ -168,6 +168,13 @@ export const streamRouter = createTRPCRouter({
         },
       });
 
+      if (!stream) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Stream Not Found.",
+        });
+      }
+
       const isOwner = stream?.userId === userId;
 
       if (stream && !isOwner) {

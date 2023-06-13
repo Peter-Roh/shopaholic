@@ -39,7 +39,7 @@ const WatchList: NextPage = () => {
   );
 
   return (
-    <Layout title="Watchlist" canGoBack>
+    <Layout title="Watchlist" canGoBack hasTabBar>
       <div className="flex min-h-screen w-full flex-col space-y-2 divide-y lg:mx-auto lg:w-3/5">
         {data ? (
           data.length === 0 ? (

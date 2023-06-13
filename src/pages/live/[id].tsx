@@ -19,7 +19,7 @@ const LiveStream: NextPage<{ id: string; userId: number | undefined }> = ({
     },
     {
       enabled: id !== undefined,
-      onError: () => void router.push("/"),
+      onError: () => void router.push("/live"),
     }
   );
 
@@ -57,10 +57,12 @@ const LiveStream: NextPage<{ id: string; userId: number | undefined }> = ({
       streamState.live &&
       streamState.videoUID
     ) {
-      void updateStreamInfo({ id: data.id, videoUid: streamState.videoUID });
+      if (userId === data.userId) {
+        void updateStreamInfo({ id: data.id, videoUid: streamState.videoUID });
+      }
       setStarted(true);
     }
-  }, [streamState, started, data, updateStreamInfo]);
+  }, [streamState, started, data, updateStreamInfo, userId]);
 
   return (
     <Layout title="Live Stream" canGoBack>
