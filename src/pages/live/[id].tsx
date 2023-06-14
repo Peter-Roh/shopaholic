@@ -12,7 +12,7 @@ const LiveStream: NextPage<{ id: string; userId: number | undefined }> = ({
 }) => {
   const router = useRouter();
   const [started, setStarted] = useState(false);
-  const { data } = api.stream.getById.useQuery(
+  const { data, refetch } = api.stream.getById.useQuery(
     {
       id: parseInt(id),
       userId: userId ? userId : -1,
@@ -23,7 +23,7 @@ const LiveStream: NextPage<{ id: string; userId: number | undefined }> = ({
     }
   );
 
-  const { mutateAsync } = api.stream.delete.useMutation();
+  const { mutateAsync } = api.stream.stop.useMutation();
 
   const { data: streamState } = api.stream.watch.useQuery(
     {
@@ -45,7 +45,7 @@ const LiveStream: NextPage<{ id: string; userId: number | undefined }> = ({
 
   const onStopStreaming = () => {
     void mutateAsync({ id: parseInt(id) }).then(() => {
-      void router.replace("/");
+      void router.push("/live");
     });
   };
 
@@ -53,16 +53,22 @@ const LiveStream: NextPage<{ id: string; userId: number | undefined }> = ({
     if (
       !started &&
       data &&
+      data.isStreaming === null &&
       streamState &&
       streamState.live &&
       streamState.videoUID
     ) {
       if (userId === data.userId) {
-        void updateStreamInfo({ id: data.id, videoUid: streamState.videoUID });
+        void updateStreamInfo({
+          id: data.id,
+          videoUid: streamState.videoUID,
+        }).then(() => {
+          void refetch();
+        });
       }
       setStarted(true);
     }
-  }, [streamState, started, data, updateStreamInfo, userId]);
+  }, [streamState, started, data, updateStreamInfo, userId, refetch]);
 
   return (
     <Layout title="Live Stream" canGoBack>
@@ -73,7 +79,7 @@ const LiveStream: NextPage<{ id: string; userId: number | undefined }> = ({
               className="aspect-video w-full rounded-md shadow-sm"
               src={`https://customer-${process.env
                 .NEXT_PUBLIC_CLOUDFLARE_CODE!}.cloudflarestream.com/${
-                data.cloudflareId
+                data.isStreaming === false ? data.videoUid : data.cloudflareId
               }/iframe`}
               allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
               allowFullScreen={true}
@@ -86,152 +92,76 @@ const LiveStream: NextPage<{ id: string; userId: number | undefined }> = ({
             {data?.description}
           </div>
         </div>
-        {data && data?.cloudflareKey !== "" && data?.cloudflareUrl !== "" && (
-          <>
-            <div className="mb-6 flex flex-col space-y-3 overflow-scroll rounded-md bg-lime-400 p-5">
-              <div>Stream Keys (secret)</div>
-              <div className="flex">
-                <span className="font-medium text-gray-800">URL: </span>
-                <div>{data?.cloudflareUrl}</div>
+        {data &&
+          data?.cloudflareKey !== "" &&
+          data?.cloudflareUrl !== "" &&
+          data.isStreaming !== false && (
+            <>
+              <div className="mb-6 flex flex-col space-y-3 overflow-scroll rounded-md bg-lime-400 p-5">
+                <div>Stream Keys (secret)</div>
+                <div className="flex">
+                  <span className="font-medium text-gray-800">URL: </span>
+                  <div>{data?.cloudflareUrl}</div>
+                </div>
+                <div className="flex">
+                  <span className="font-medium text-gray-800">Key: </span>
+                  <div>{data?.cloudflareKey}</div>
+                </div>
               </div>
-              <div className="flex">
-                <span className="font-medium text-gray-800">Key: </span>
-                <div>{data?.cloudflareKey}</div>
-              </div>
-            </div>
-            <div
-              className="flex-x-center mb-6 cursor-pointer rounded-md bg-red-500 py-3 text-white"
-              onClick={onStopStreaming}
-            >
-              <svg
-                className="icon"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.564A.562.562 0 019 14.437V9.564z"
-                />
-              </svg>
-              <div>End Streaming</div>
-            </div>
-          </>
-        )}
-
-        <div className="mt-2 mb-16 h-[55vh] space-y-4 overflow-y-scroll px-2 lg:h-[70vh]">
-          <div className="flex items-start space-x-2">
-            <div className="h-8 w-8 rounded-full bg-slate-400" />
-            <div className="w-1/2 rounded-md border border-gray-300 p-2 text-sm text-gray-700">
-              <p>Hi how much is it?</p>
-            </div>
-          </div>
-          <div className="flex flex-row-reverse items-start space-x-2 space-x-reverse">
-            <div className="h-8 w-8 rounded-full bg-slate-400" />
-            <div className="w-1/2 rounded-md border border-gray-300 p-2 text-sm text-gray-700">
-              <p>I want ￦10,000</p>
-            </div>
-          </div>
-          <div className="flex items-start space-x-2">
-            <div className="h-8 w-8 rounded-full bg-slate-400" />
-            <div className="w-1/2 rounded-md border border-gray-300 p-2 text-sm text-gray-700">
-              <p>Hi how much is it?</p>
-            </div>
-          </div>
-          <div className="flex flex-row-reverse items-start space-x-2 space-x-reverse">
-            <div className="h-8 w-8 rounded-full bg-slate-400" />
-            <div className="w-1/2 rounded-md border border-gray-300 p-2 text-sm text-gray-700">
-              <p>I want ￦10,000</p>
-            </div>
-          </div>
-          <div className="flex items-start space-x-2">
-            <div className="h-8 w-8 rounded-full bg-slate-400" />
-            <div className="w-1/2 rounded-md border border-gray-300 p-2 text-sm text-gray-700">
-              <p>Hi how much is it?</p>
-            </div>
-          </div>
-          <div className="flex flex-row-reverse items-start space-x-2 space-x-reverse">
-            <div className="h-8 w-8 rounded-full bg-slate-400" />
-            <div className="w-1/2 rounded-md border border-gray-300 p-2 text-sm text-gray-700">
-              <p>I want ￦10,000</p>
-            </div>
-          </div>
-          <div className="flex items-start space-x-2">
-            <div className="h-8 w-8 rounded-full bg-slate-400" />
-            <div className="w-1/2 rounded-md border border-gray-300 p-2 text-sm text-gray-700">
-              <p>Hi how much is it?</p>
-            </div>
-          </div>
-          <div className="flex flex-row-reverse items-start space-x-2 space-x-reverse">
-            <div className="h-8 w-8 rounded-full bg-slate-400" />
-            <div className="w-1/2 rounded-md border border-gray-300 p-2 text-sm text-gray-700">
-              <p>I want ￦10,000</p>
-            </div>
-          </div>
-          <div className="flex items-start space-x-2">
-            <div className="h-8 w-8 rounded-full bg-slate-400" />
-            <div className="w-1/2 rounded-md border border-gray-300 p-2 text-sm text-gray-700">
-              <p>Hi how much is it?</p>
-            </div>
-          </div>
-          <div className="flex flex-row-reverse items-start space-x-2 space-x-reverse">
-            <div className="h-8 w-8 rounded-full bg-slate-400" />
-            <div className="w-1/2 rounded-md border border-gray-300 p-2 text-sm text-gray-700">
-              <p>I want ￦10,000</p>
-            </div>
-          </div>
-          <div className="flex items-start space-x-2">
-            <div className="h-8 w-8 rounded-full bg-slate-400" />
-            <div className="w-1/2 rounded-md border border-gray-300 p-2 text-sm text-gray-700">
-              <p>Hi how much is it?</p>
-            </div>
-          </div>
-          <div className="flex flex-row-reverse items-start space-x-2 space-x-reverse">
-            <div className="h-8 w-8 rounded-full bg-slate-400" />
-            <div className="w-1/2 rounded-md border border-gray-300 p-2 text-sm text-gray-700">
-              <p>I want ￦10,000</p>
-            </div>
-          </div>
-          <div ref={scrollRef} />
-        </div>
-
-        <div className="fixed inset-x-0 bottom-0 bg-white py-2 lg:relative">
-          <div className="relative flex w-full items-center px-2">
-            <input
-              type="text"
-              className="ring-focus input w-full rounded-2xl border-gray-300 pr-12 shadow-sm focus:border-cyan-500"
-            />
-            <div className="absolute inset-y-0 right-2 flex py-1 pr-1">
-              <button className="ring-focus-2 flex items-center rounded-2xl bg-cyan-500 px-3 text-sm text-white hover:bg-cyan-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon"
-                  width="44"
-                  height="44"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="#f2f2f2"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+              {data.isStreaming ? (
+                <div
+                  className="flex-x-center mb-6 cursor-pointer rounded-md bg-red-500 py-3 text-white"
+                  onClick={onStopStreaming}
                 >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <line x1="10" y1="14" x2="21" y2="3" />
-                  <path d="M21 3l-6.5 18a0.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a0.55 .55 0 0 1 0 -1l18 -6.5" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
+                  <svg
+                    className="icon"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.564A.562.562 0 019 14.437V9.564z"
+                    />
+                  </svg>
+                  <div>End Streaming</div>
+                </div>
+              ) : (
+                <div className="flex-x-center mb-6 rounded-md bg-gray-500 py-3 text-white">
+                  <svg
+                    className="icon"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z"
+                    />
+                  </svg>
+                  <div>Please start streaming...</div>
+                </div>
+              )}
+            </>
+          )}
       </div>
     </Layout>
   );

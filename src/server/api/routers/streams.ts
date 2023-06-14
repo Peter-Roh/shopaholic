@@ -3,7 +3,7 @@ import {
   streamCreateInput,
   streamGetManyInput,
   getStreamByIdInput,
-  deleteStreamInput,
+  stopStreamInput,
   startStreamingInput,
   watchStreamingInput,
 } from "../schema";
@@ -94,20 +94,24 @@ export const streamRouter = createTRPCRouter({
           id,
         },
         data: {
+          isStreaming: true,
           videoUid,
           thumbnail: `https://customer-${process.env
             .CLOUDFLARE_CODE!}.cloudflarestream.com/${videoUid}/thumbnails/thumbnail.jpg`,
         },
       });
     }),
-  delete: privateProcedure
-    .input(deleteStreamInput)
+  stop: privateProcedure
+    .input(stopStreamInput)
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
 
-      await ctx.prisma.stream.delete({
+      await ctx.prisma.stream.update({
         where: {
           id,
+        },
+        data: {
+          isStreaming: false,
         },
       });
     }),
@@ -117,6 +121,16 @@ export const streamRouter = createTRPCRouter({
       const { page } = input;
 
       const streams = await ctx.prisma.stream.findMany({
+        where: {
+          OR: [
+            {
+              isStreaming: true,
+            },
+            {
+              isStreaming: false,
+            },
+          ],
+        },
         include: {
           user: {
             select: {
@@ -125,8 +139,8 @@ export const streamRouter = createTRPCRouter({
             },
           },
         },
-        take: 20,
-        skip: 20 * page,
+        take: 10,
+        skip: 10 * page,
       });
 
       return streams;

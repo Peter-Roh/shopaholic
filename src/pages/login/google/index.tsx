@@ -1,9 +1,7 @@
 import { api } from "@/utils/api";
-import type { TRPCError } from "@trpc/server";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { toast } from "react-hot-toast";
 
 const GoogleLogin: NextPage = () => {
   const router = useRouter();
@@ -17,8 +15,6 @@ const GoogleLogin: NextPage = () => {
       if (accessToken) {
         await mutateAsync({
           accessToken,
-        }).catch((err: TRPCError) => {
-          toast.error(err.message);
         });
       }
     }

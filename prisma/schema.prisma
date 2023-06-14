@@ -146,6 +146,7 @@ model Stream {
   cloudflareKey String
   videoUid      String
   thumbnail     String
+  isStreaming   Boolean?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

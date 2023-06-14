@@ -135,6 +135,6 @@ export const startStreamingInput = z.object({
   videoUid: z.string(),
 });
 
-export const deleteStreamInput = z.object({
+export const stopStreamInput = z.object({
   id: z.number().int().nonnegative(),
 });

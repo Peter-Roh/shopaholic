@@ -17,7 +17,7 @@ const GithubLogin: NextPage = () => {
   const { mutateAsync, isSuccess } = api.auth.github.useMutation();
 
   useEffect(() => {
-    async function googleLogin() {
+    async function githubLogin() {
       if (code) {
         await mutateAsync({
           code,
@@ -26,7 +26,7 @@ const GithubLogin: NextPage = () => {
         });
       }
     }
-    void googleLogin();
+    void githubLogin();
   }, [code, mutateAsync]);
 
   useEffect(() => {
