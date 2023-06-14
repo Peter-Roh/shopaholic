@@ -186,7 +186,7 @@ const ItemsDetail: NextPage<{ id: string; userId: number | undefined }> = ({
     itemId,
     comment,
   }) => {
-    if (!isSuccess) {
+    if (!isSuccess && comment !== "") {
       await mutateAddAsync({ userId, itemId, comment }).then((data) => {
         if (data) {
           setCommentsData((prev) => [data, ...prev]);
