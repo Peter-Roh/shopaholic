@@ -138,3 +138,11 @@ export const startStreamingInput = z.object({
 export const stopStreamInput = z.object({
   id: z.number().int().nonnegative(),
 });
+
+export const createPurchaseInput = z.object({
+  userId: z.number().int().nonnegative(),
+});
+
+export const getManyPurchaseInput = z.object({
+  page: z.number().int(),
+});

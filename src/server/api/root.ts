@@ -8,6 +8,7 @@ import { cartRouter } from "./routers/cart";
 import { commentRouter } from "./routers/comments";
 import { authRouter } from "./routers/auth";
 import { streamRouter } from "./routers/streams";
+import { purchaseRouter } from "./routers/purchase";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
@@ -19,6 +20,7 @@ export const appRouter = createTRPCRouter({
   cart: cartRouter,
   comment: commentRouter,
   stream: streamRouter,
+  purchase: purchaseRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -307,7 +307,7 @@ const ItemsDetail: NextPage<{ id: string; userId: number | undefined }> = ({
           <div className="flex-x-center space-x-2">
             <button
               onClick={handleAddCart}
-              className="ring-focus-2 flex-x-center flex-1 rounded-md bg-lime-500 py-2 font-medium text-white hover:bg-lime-600"
+              className="ring-focus-2 flex-x-center flex-1 rounded-md bg-lime-500 py-2 font-medium text-white hover:bg-lime-600 focus:ring-lime-500"
             >
               <svg
                 className="icon mr-2"

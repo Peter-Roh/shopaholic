@@ -1,15 +1,21 @@
 import CartItem from "@/components/CartItem";
 import Layout from "@/components/Layout";
+import Modal from "@/components/Modal";
+import useUser from "@/libs/client/useUser";
 import { createHelpers } from "@/libs/server/helpers";
 import { withSessionSsr } from "@/libs/server/sessions";
 import { api } from "@/utils/api";
 import { getPrice } from "@/utils/common";
 import type { GetServerSidePropsContext, NextPage } from "next";
-import React, { useCallback, useMemo } from "react";
+import { useRouter } from "next/router";
+import React, { useCallback, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 
 const Cart: NextPage = () => {
   const { data, refetch } = api.cart.getMyCart.useQuery();
+  const { data: user } = useUser();
+  const [modalOpen, setModalOpen] = useState(false);
+  const router = useRouter();
 
   const totalPrice = useMemo(() => {
     if (!data) {
@@ -32,11 +38,28 @@ const Cart: NextPage = () => {
     },
     [mutateAsync, refetch]
   );
+  const { mutateAsync: purchaseAsync } = api.purchase.create.useMutation();
+
+  const handleOnPurchase = () => {
+    setModalOpen(true);
+  };
+
+  const handleOnConfirm = useCallback(() => {
+    void purchaseAsync({ userId: user.id }).then(() => {
+      void router.push("/purchase/done");
+    });
+  }, [router, purchaseAsync, user.id]);
+
+  const Content = useMemo(() => {
+    return (
+      <div className="flex-x-center my-6 mx-4">This is a fake purchase.</div>
+    );
+  }, []);
 
   return (
     <Layout title="Cart" canGoBack hasTabBar>
       <div className="flex flex-col lg:mx-auto lg:w-3/5">
-        <div className="flex flex-col space-y-2 divide-y">
+        <div className="mb-4 flex flex-col space-y-2 divide-y">
           {data && data.cart.length === 0 ? (
             <>
               <div className="flex-y-center my-2 text-gray-600">
@@ -64,11 +87,25 @@ const Cart: NextPage = () => {
             <span className="ml-2 font-semibold">total</span>
             <span className="mr-2 font-semibold">${getPrice(totalPrice)}</span>
           </div>
-          {
-            // TODO 결제
-          }
+          <div
+            onClick={handleOnPurchase}
+            className={`flex-x-center w-full rounded-md py-2 font-medium text-white  ${
+              data?.cart.length === 0
+                ? "bg-gray-500"
+                : "ring-focus-2 bg-lime-500 hover:bg-lime-600 focus:ring-lime-500"
+            }`}
+          >
+            Purchase
+          </div>
         </div>
       </div>
+      <Modal
+        modalType="Confirm"
+        isOpen={modalOpen}
+        confirmText="Confirm"
+        onConfirm={handleOnConfirm}
+        content={Content}
+      />
     </Layout>
   );
 };

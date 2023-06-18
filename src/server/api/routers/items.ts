@@ -53,7 +53,7 @@ export const itemsRouter = createTRPCRouter({
   getMany: privateProcedure
     .input(getManyInput)
     .mutation(async ({ ctx, input }) => {
-      const { categoryId, subcategoryId } = input;
+      const { categoryId, subcategoryId, page } = input;
 
       const items =
         categoryId !== -1 || subcategoryId !== -1
@@ -71,7 +71,7 @@ export const itemsRouter = createTRPCRouter({
                 },
               },
               take: 20,
-              skip: 20 * input.page,
+              skip: 20 * page,
             })
           : await ctx.prisma.item.findMany({
               include: {
@@ -83,7 +83,7 @@ export const itemsRouter = createTRPCRouter({
                 },
               },
               take: 20,
-              skip: 20 * input.page,
+              skip: 20 * page,
             });
 
       return items;
