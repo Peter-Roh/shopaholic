@@ -1,5 +1,9 @@
 import { TRPCError } from "@trpc/server";
-import { createPurchaseInput, getManyPurchaseInput } from "../schema";
+import {
+  createPurchaseInput,
+  getManyPurchaseInput,
+  reportInput,
+} from "../schema";
 import { createTRPCRouter, privateProcedure } from "../trpc";
 
 export const purchaseRouter = createTRPCRouter({
@@ -54,7 +58,55 @@ export const purchaseRouter = createTRPCRouter({
             userId,
           },
         });
+
+        await ctx.prisma.user.update({
+          where: {
+            id: item.item.userId,
+          },
+          data: {
+            soldItems: {
+              create: {
+                qty: item.qty,
+                orderId: order.id,
+                itemId: item.itemId,
+              },
+            },
+          },
+        });
       });
+    }),
+  report: privateProcedure
+    .input(reportInput)
+    .mutation(async ({ ctx, input }) => {
+      const { year } = input;
+
+      const soldItems = await ctx.prisma.user.findUnique({
+        where: {
+          id: ctx.userId,
+        },
+        select: {
+          soldItems: {
+            where: {
+              AND: [
+                {
+                  createdAt: {
+                    gte: new Date(year, 0, 1),
+                  },
+                },
+                {
+                  createdAt: {
+                    lte: new Date(year + 1, 0, 1),
+                  },
+                },
+              ],
+            },
+          },
+        },
+      });
+
+      return {
+        soldItems,
+      };
     }),
   getMany: privateProcedure
     .input(getManyPurchaseInput)

@@ -24,10 +24,11 @@ model User {
   commentLikes CommentLike[]
   streams      Stream[]
   messages     Message[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
   orders       Order[]
   orderItems   OrderItem[]
+  soldItems    SoldItem[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model Token {
@@ -76,6 +77,7 @@ model Item {
   updatedAt     DateTime    @updatedAt
   comments      Comment[]
   orderItems    OrderItem[]
+  soldItems     SoldItem[]
 
   @@index([userId])
   @@index([categoryId])
@@ -176,6 +178,23 @@ enum OrderState {
   COMPLETED
 }
 
+model SoldItem {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId    Int
+  qty       Int
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([itemId])
+  @@index([orderId])
+}
+
 model OrderItem {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -201,6 +220,7 @@ model Order {
   orderItems OrderItem[]
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+  soldItems  SoldItem[]
 
   @@index([userId])
 }

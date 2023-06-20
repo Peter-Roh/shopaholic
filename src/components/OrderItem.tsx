@@ -28,8 +28,6 @@ const OrderItem: NextPage<OrderItemProps> = ({
     }, 0);
   }, [orderItems]);
 
-  console.log(createdAt);
-
   return (
     <div className="mb-4">
       <div className="text-gray-900">

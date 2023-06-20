@@ -146,3 +146,7 @@ export const createPurchaseInput = z.object({
 export const getManyPurchaseInput = z.object({
   page: z.number().int(),
 });
+
+export const reportInput = z.object({
+  year: z.number().int(),
+});
