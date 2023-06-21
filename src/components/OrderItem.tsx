@@ -30,23 +30,23 @@ const OrderItem: NextPage<OrderItemProps> = ({
 
   return (
     <div className="mb-4">
-      <div className="text-gray-900">
+      <div className="text-gray-900 dark:text-white">
         <span>Order ID: </span>
         <span>#{id}</span>
       </div>
-      <div className="text-gray-900">
+      <div className="text-gray-900 dark:text-white">
         <span>Order State: </span>
         <span>{orderStateToString(orderState)}</span>
       </div>
-      <div className="text-gray-900">
+      <div className="text-gray-900 dark:text-white">
         <span>Total price:</span>
         <span>${getPrice(totalPrice)}</span>
       </div>
-      <div>
+      <div className="text-gray-900 dark:text-white">
         <span>Order date:</span>
         <span>{dayjs(createdAt).format("YYYY.MM.DD")}</span>
       </div>
-      <table className="mt-4 w-full border">
+      <table className="mt-4 w-full border dark:text-white">
         <thead>
           <tr className="flex">
             <th className="basis-1/2 px-1 py-2">Name</th>

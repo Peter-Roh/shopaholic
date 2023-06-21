@@ -33,7 +33,7 @@ const Live: NextPage = () => {
 
   return (
     <Layout title="Live" hasTabBar canGoBack>
-      <div className="flex flex-col space-y-2 divide-y lg:mx-auto lg:w-3/5">
+      <div className="mb-4 flex flex-col space-y-2 divide-y lg:mx-auto lg:w-3/5">
         {data ? (
           data.length === 0 ? (
             <>

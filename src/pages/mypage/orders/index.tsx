@@ -52,7 +52,7 @@ const Orders: NextPage = () => {
         {data ? (
           data.length === 0 ? (
             <>
-              <div className="flex-y-center mt-2 text-gray-600">
+              <div className="flex-y-center mt-2 text-gray-600 dark:text-white">
                 Order not found.
               </div>
             </>

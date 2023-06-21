@@ -191,7 +191,7 @@ const Report: NextPage = () => {
   return (
     <Layout title="Report" canGoBack hasTabBar>
       <div className="flex-x-center my-2">
-        <span className="text-lg font-semibold text-gray-800">
+        <span className="text-lg font-semibold text-gray-800 dark:text-white">
           Search for year:
         </span>
         <button
@@ -214,7 +214,9 @@ const Report: NextPage = () => {
             />
           </svg>
         </button>
-        <span className="mx-4 rounded-md border px-4 py-2">{year}</span>
+        <span className="mx-4 rounded-md border px-4 py-2 text-gray-900 dark:text-white">
+          {year}
+        </span>
         <button
           onClick={onClickUp}
           className="ring-focus-2 rounded-md border border-transparent bg-cyan-500 py-1 px-2 text-lg font-medium text-white shadow-sm hover:bg-cyan-600"
