@@ -28,7 +28,8 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
-    "**/*.mjs"
+    "**/*.mjs",
+    "./src/index.d.ts"
   ],
   "exclude": ["node_modules"]
 }
