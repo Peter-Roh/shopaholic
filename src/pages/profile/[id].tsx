@@ -3,7 +3,7 @@ import Layout from "@/components/Layout";
 import { type RouterOutputs, api } from "@/utils/api";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import DefaultUser from "../../../public/default_user.png";
+import DefaultUser from "#/default_user.png";
 import Item from "@/components/Item";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useCallback, useState } from "react";

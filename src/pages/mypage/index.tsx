@@ -4,7 +4,7 @@ import useUser from "@/libs/client/useUser";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import Image from "next/image";
-import DefaultUser from "../../../public/default_user.png";
+import DefaultUser from "#/default_user.png";
 import { useMemo } from "react";
 import { withSessionSsr } from "@/libs/server/sessions";
 import { createHelpers } from "@/libs/server/helpers";

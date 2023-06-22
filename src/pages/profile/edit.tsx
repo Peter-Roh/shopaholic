@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import Modal from "@/components/Modal";
 import Image from "next/image";
-import DefaultUser from "../../../public/default_user.png";
+import DefaultUser from "#/default_user.png";
 import type { cloudflareUpload } from "@/types/cloudflare";
 import { withSessionSsr } from "@/libs/server/sessions";
 import { createHelpers } from "@/libs/server/helpers";

@@ -3,7 +3,7 @@ import Layout from "@/components/Layout";
 import { useRouter } from "next/router";
 import { type RouterInputs, api, type RouterOutputs } from "@/utils/api";
 import Image from "next/image";
-import DefaultUser from "../../../public/default_user.png";
+import DefaultUser from "#/default_user.png";
 import { type ChangeEvent, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { getPrice } from "@/utils/common";

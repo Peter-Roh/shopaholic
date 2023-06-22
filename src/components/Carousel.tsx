@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { Carousel } from "react-responsive-carousel";
-import CarouselImage from "./../../public/carousel.png";
+import CarouselImage from "#/carousel.png";
 import Image from "next/image";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 

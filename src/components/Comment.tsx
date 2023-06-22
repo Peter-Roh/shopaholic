@@ -2,7 +2,7 @@ import type { Prettify, Unpacked } from "@/types/common";
 import type { RouterOutputs } from "@/utils/api";
 import type { NextPage } from "next";
 import Image from "next/image";
-import DefaultUser from "../../public/default_user.png";
+import DefaultUser from "#/default_user.png";
 import dayjs from "@/libs/client/day";
 
 type Comment = Unpacked<RouterOutputs["comment"]["getByItem"]["comments"]>;

@@ -10,8 +10,8 @@ import React, {
 } from "react";
 import useUser from "@/libs/client/useUser";
 import Image from "next/image";
-import DefaultUser from "../../public/default_user.png";
-import Logo from "../../public/shopaholic.png";
+import DefaultUser from "#/default_user.png";
+import Logo from "#/shopaholic.png";
 import { api } from "@/utils/api";
 
 type HeaderProps = {

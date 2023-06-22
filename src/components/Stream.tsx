@@ -3,7 +3,7 @@ import { type RouterOutputs } from "@/utils/api";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import DefaultUser from "../../public/default_user.png";
+import DefaultUser from "#/default_user.png";
 
 type Stream = NonNullable<Unpacked<RouterOutputs["stream"]["getMany"]>>;
 type StreamProps = Prettify<
