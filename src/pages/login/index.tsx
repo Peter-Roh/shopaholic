@@ -24,24 +24,24 @@ const Login: NextPage = () => {
       await mutateAsync({
         email,
       }).then((token) => {
-        console.log(token);
+        // console.log(token);
         // * 계속 메일 보내지 않도록 개발 중 주석 처리
 
-        // const templateParams = {
-        //   from_name: "Shopaholic",
-        //   message: `${
-        //     process.env.NODE_ENV === "development"
-        //       ? `http://localhost:${process.env.PORT ?? 3000}`
-        //       : `https://${process.env.VERCEL_URL!}`
-        //   }/login/confirm?token=${token}`,
-        // };
+        const templateParams = {
+          from_name: "Shopaholic",
+          message: `${
+            process.env.NODE_ENV === "development"
+              ? `http://localhost:${process.env.PORT ?? 3000}`
+              : `https://${process.env.VERCEL_URL!}`
+          }/login/confirm?token=${token}`,
+        };
 
-        // void emailjs.send(
-        //   process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        //   process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        //   templateParams,
-        //   process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
-        // );
+        void emailjs.send(
+          process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+          process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+          templateParams,
+          process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+        );
       });
     }
   };
