@@ -56,7 +56,7 @@ const Home: NextPage = () => {
     <Layout title="Home" hasTabBar canGoBack>
       <div className="mt-14 flex w-full flex-col justify-start lg:mx-auto lg:w-3/5">
         <CarouselComponent />
-        <div className="mt-4 flex flex-col space-y-2 divide-y">
+        <div className="my-4 flex flex-col space-y-2 divide-y">
           {data ? (
             data.length === 0 ? (
               <>

@@ -48,7 +48,7 @@ const Cart: NextPage = () => {
     void purchaseAsync({ userId: user.id }).then(() => {
       void router.push("/purchase/done");
     });
-  }, [router, purchaseAsync, user.id]);
+  }, [router, purchaseAsync, user?.id]);
 
   const Content = useMemo(() => {
     return (
