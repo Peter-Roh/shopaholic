@@ -16,6 +16,8 @@
 
 ## Descriptions
 
+Full-stack typesafe, serverless shopping mall website.
+
 This is a personal web project for my portfolio.
 
 ## Features
@@ -31,6 +33,8 @@ This is a personal web project for my portfolio.
 - Rate limiting using upstash
 
 - Store and optimize images using Cloudflare Images
+
+- Live streaming using Cloudflare Stream
 
 ## Installation
 
