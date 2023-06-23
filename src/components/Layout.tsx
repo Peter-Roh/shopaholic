@@ -4,6 +4,7 @@ import React from "react";
 import Header from "./Header";
 import TabBar from "./TabBar";
 import CategoryBar from "./CategoryBar";
+import Head from "next/head";
 
 type LayoutProps = {
   title: string;
@@ -22,6 +23,9 @@ const Layout: NextPage<LayoutProps> = ({
 
   return (
     <div className="page-full">
+      <Head>
+        <title>{title} | Shopaholic</title>
+      </Head>
       <div className="fixed top-0 z-10 w-full">
         <Header title={title} canGoBack={canGoBack} router={router} />
         {router.pathname === "/" && <CategoryBar />}
