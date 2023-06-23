@@ -6,7 +6,6 @@ import { z } from "zod";
 const server = z.object({
   DATABASE_URL: z.string().url(),
   NODE_ENV: z.enum(["development", "test", "production"]),
-  PORT: z.string(),
   SESSION_PASSWORD: z.string().min(32),
   UPSTASH_REDIS_REST_URL: z.string().url(),
   UPSTASH_REDIS_REST_TOKEN: z.string(),
@@ -23,6 +22,7 @@ const server = z.object({
  * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 const client = z.object({
+  NEXT_PUBLIC_PORT: z.string(),
   NEXT_PUBLIC_EMAILJS_SERVICE_ID: z.string(),
   NEXT_PUBLIC_EMAILJS_TEMPLATE_ID: z.string(),
   NEXT_PUBLIC_EMAILJS_PUBLIC_KEY: z.string(),
@@ -42,7 +42,6 @@ const client = z.object({
 const processEnv = {
   DATABASE_URL: process.env.DATABASE_URL,
   NODE_ENV: process.env.NODE_ENV,
-  PORT: process.env.PORT,
   SESSION_PASSWORD: process.env.SESSION_PASSWORD,
   UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
   UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
@@ -52,6 +51,7 @@ const processEnv = {
   GITHUB_SECRET: process.env.GITHUB_SECRET,
   CLOUDFLARE_STREAM_TOKEN: process.env.CLOUDFLARE_STREAM_TOKEN,
   CLOUDFLARE_CODE: process.env.CLOUDFLARE_CODE,
+  NEXT_PUBLIC_PORT: process.env.NEXT_PUBLIC_PORT,
   NEXT_PUBLIC_EMAILJS_SERVICE_ID: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
   NEXT_PUBLIC_EMAILJS_TEMPLATE_ID: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
   NEXT_PUBLIC_EMAILJS_PUBLIC_KEY: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,

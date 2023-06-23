@@ -24,7 +24,7 @@ const Layout: NextPage<LayoutProps> = ({
   return (
     <div className="page-full">
       <Head>
-        <title>{title} | Shopaholic</title>
+        <title>{`${title} | Shopaholic`}</title>
       </Head>
       <div className="fixed top-0 z-10 w-full">
         <Header title={title} canGoBack={canGoBack} router={router} />
