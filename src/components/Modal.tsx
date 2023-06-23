@@ -72,7 +72,7 @@ const Modal: NextPage<ModalProps> = (props) => {
           )}
           {props.modalType !== "Loading" && (
             <div
-              className={`flex-x-center flex-1 bg-cyan-500 py-2 font-medium text-slate-50 ${
+              className={`flex-x-center flex-1 cursor-pointer bg-cyan-500 py-2 font-medium text-slate-50 ${
                 props.modalType === "Cancel" ? "rounded-br-md" : "rounded-b-md"
               }`}
               onClick={() => props.onConfirm()}
