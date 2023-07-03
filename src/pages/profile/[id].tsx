@@ -82,7 +82,7 @@ const Profile: NextPage<{ id: string }> = ({ id }) => {
             </div>
           </div>
         </div>
-        <div className="mt-10">
+        <div className="mt-10 mb-4">
           <span className="text-lg font-semibold text-cyan-500">
             Selling Items
           </span>

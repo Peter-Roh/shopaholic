@@ -410,6 +410,7 @@ const ItemsDetail: NextPage<{ id: string; userId: number | undefined }> = ({
                     <div className="relative mb-2 aspect-[4/3] w-full">
                       <Image
                         alt="item"
+                        className="object-contain"
                         src={`https://imagedelivery.net/21n4FpHfRA-Vp-3T4t5U8Q/${relatedItem.image}/public`}
                         sizes="50vw"
                         fill
