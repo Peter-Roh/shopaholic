@@ -34,9 +34,9 @@ const CartItem: NextPage<CartItemProps> = ({
 }) => {
   return (
     <Link href={`/items/${id}`}>
-      <div className="mt-1 flex cursor-pointer items-center justify-between">
+      <div className="mt-2 flex cursor-pointer items-center justify-between">
         <div className="flex">
-          <div className="relative h-20 w-20">
+          <div className="relative h-20 w-20 min-w-[80px]">
             <Image
               alt="item"
               className="rounded-md object-contain"
@@ -47,10 +47,10 @@ const CartItem: NextPage<CartItemProps> = ({
             />
           </div>
           <div className="ml-4 flex flex-col items-start justify-start">
-            <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
+            <span className="line-clamp-2 text-lg font-bold text-gray-900 dark:text-slate-100">
               {name}
             </span>
-            <span className="text-xs font-medium text-gray-500 dark:text-slate-400">
+            <span className="line-clamp-2 text-xs font-medium text-gray-500 dark:text-slate-400">
               {description}
             </span>
             <span className="mt-1 font-medium text-gray-900 dark:text-slate-100">

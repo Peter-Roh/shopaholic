@@ -36,7 +36,7 @@ const Item: NextPage<ItemProps> = ({
             />
           </div>
           <div className="ml-4 flex flex-col items-start justify-start">
-            <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
+            <span className="line-clamp-2 text-lg font-bold text-gray-900 dark:text-slate-100">
               {name}
             </span>
             <span className="line-clamp-2 text-xs font-medium text-gray-500 dark:text-slate-400">

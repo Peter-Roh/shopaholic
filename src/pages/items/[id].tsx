@@ -415,7 +415,7 @@ const ItemsDetail: NextPage<{ id: string; userId: number | undefined }> = ({
                         fill
                       />
                     </div>
-                    <p className="text-lg text-gray-900 dark:text-slate-100">
+                    <p className="line-clamp-2 text-lg text-gray-900 dark:text-slate-100">
                       {relatedItem.name}
                     </p>
                     <p className="text-sm font-medium text-gray-900 dark:text-slate-200">

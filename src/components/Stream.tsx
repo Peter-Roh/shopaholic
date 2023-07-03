@@ -33,7 +33,7 @@ const Stream: NextPage<StreamProps> = ({
           </div>
         )}
         <div className="mt-2 flex items-center justify-between">
-          <p className="text-lg font-medium text-gray-700 dark:text-white">
+          <p className="line-clamp-2 text-lg font-medium text-gray-700 dark:text-white">
             {title}
           </p>
           <div className="flex items-center">
