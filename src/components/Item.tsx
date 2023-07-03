@@ -39,7 +39,7 @@ const Item: NextPage<ItemProps> = ({
             <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
               {name}
             </span>
-            <span className="text-xs font-medium text-gray-500 dark:text-slate-400">
+            <span className="line-clamp-2 text-xs font-medium text-gray-500 dark:text-slate-400">
               {description}
             </span>
             <span className="mt-1 font-medium text-gray-900 dark:text-slate-100">
