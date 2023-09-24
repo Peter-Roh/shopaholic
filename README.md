@@ -10,13 +10,13 @@
 
 - [Prisma](https://prisma.io) - TypeScript ORM(Object Relational Mapping)
 
-- [tRPC](https://trpc.io) - End-to-end typesafe APIs
+- [tRPC](https://trpc.io) - End-to-end type safe APIs
 
 - [PlanetScale](https://planetscale.com) - MySQL-compatible serverless database platform
 
 ## Descriptions
 
-Full-stack typesafe, serverless shopping mall website.
+Full-stack type safe, serverless shopping mall website.
 
 This is a personal web project for my portfolio.
 
