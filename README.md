@@ -26,7 +26,7 @@ This is a personal web project for my portfolio.
 
 - CRUD operations with tRPC and Prisma
 
-- Full-stack typesafety
+- Full-stack type safety
 
 - Passwordless - login
 
